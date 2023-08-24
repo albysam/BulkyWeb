@@ -1,4 +1,6 @@
-﻿using Bulky.Models;
+﻿using Bulky.DataAccess.Repository;
+using Bulky.DataAccess.Repository.IRepository;
+using Bulky.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bulky.DataAccess.Data
@@ -9,8 +11,8 @@ namespace Bulky.DataAccess.Data
         {
             
         }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Product> Products { get; set; }
+        public virtual DbSet<Category>? Categories { get; set; } = default;
+        public virtual DbSet<Product>? Products { get; set; } = default;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>().HasData(
