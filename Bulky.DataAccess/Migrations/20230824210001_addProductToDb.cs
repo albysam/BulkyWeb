@@ -7,19 +7,11 @@
 namespace BulkyWeb.Migrations
 {
     /// <inheritdoc />
-    public partial class addProductsToDb : Migration
+    public partial class addProductToDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "Name",
-                table: "Categories",
-                type: "nvarchar(30)",
-                maxLength: 30,
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
 
             migrationBuilder.CreateTable(
                 name: "Products",
