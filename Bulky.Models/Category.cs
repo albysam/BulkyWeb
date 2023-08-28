@@ -11,7 +11,7 @@ namespace Bulky.Models
         [DisplayName("Category Name")]
         [Required]
         [MaxLength(30)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
        
         [DisplayName("Display Order")]

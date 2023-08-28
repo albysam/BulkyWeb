@@ -17,12 +17,12 @@ namespace Bulky.Models
 
         [DisplayName("Category Name")]
         [Required]
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
         [Required]
-        public string ISBN { get; set; }
+        public string? ISBN { get; set; }
         [Required]
-        public string Author { get; set; }
+        public string? Author { get; set; }
         [Required]
         [DisplayName("List Price")]
         [Range(1, 1000, ErrorMessage = "Price must between 1-1000")]
@@ -47,8 +47,8 @@ namespace Bulky.Models
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         [ValidateNever]
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
         [ValidateNever]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }
