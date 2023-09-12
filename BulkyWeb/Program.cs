@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Bulky.Utility;
 using Microsoft.Extensions.Options;
+using Bulky.DataAccess.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 });
 builder.Services.AddRazorPages();
-
+//builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IUnitOfWork, unitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
         var app = builder.Build();
@@ -44,10 +45,18 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
         app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+//SeedDatabase();
 app.MapRazorPages();
         app.MapControllerRoute(
             name: "default",
             pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
         app.Run();
-   
+//   void SeedDatabase()
+//{
+//    using (var scope = app.Services.CreateScope())
+//    {
+//        var dbInitializer = scope.ServiceProvider.GetRequiredService<DbInitializer>();
+//        dbInitializer.Initialize();
+//    }
+//}

@@ -164,7 +164,32 @@
                                     Add to Cart
                                 </button>
                             </div>
+                            <div class="col-12 col-md-6 pb-1">
+
+                              
+
+
+
+                               @*  @if (Model.Wishlist.ProductId == null)
+                               { *@
+                                   
+                                <button type="submit" asp-action="Wishlist" onclick="return validateInput()"
+                                        class="btn btn-primary bg-gradient  w-100 py-2 text-uppercase fw-semibold">
+                                    Move to Wishlist
+                                    </button>
+                               @*  }
+                                else
+                                {
+                                    <button type="submit" disabled
+                                            class="btn btn-primary bg-gradient  w-100 py-2 text-uppercase fw-semibold">
+                                        Added to Wishlist
+                                    </button>
+                                } *@
+                            </div>
                         </div>
+                      
+                           
+                       
                     </div>
 
                 </div>
@@ -172,3 +197,7 @@
         </div>
     </div>
 </form>
+
+
+
+

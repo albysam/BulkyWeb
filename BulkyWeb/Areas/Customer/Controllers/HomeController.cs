@@ -73,6 +73,47 @@ namespace BulkyWeb.Area.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
+
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Wishlist(Wishlist wishlist)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            wishlist.ApplicationUserId = userId;
+
+            Wishlist wishlistFromDb = _unitOfWork.Wishlist.Get(u => u.ApplicationUserId == userId &&
+            u.ProductId == wishlist.ProductId);
+
+
+            if (wishlistFromDb != null)
+            {
+                TempData["success"] = "Product already added in the Wishlist";
+            }
+
+            else
+            {
+
+                _unitOfWork.Wishlist.Add(wishlist);
+                TempData["success"] = "Wishlist updated Successfully";
+                _unitOfWork.Save();
+            }
+
+          
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+
+
+
+
         public IActionResult Privacy()
         {
             return View();
