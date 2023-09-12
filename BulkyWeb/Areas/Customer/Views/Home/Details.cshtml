@@ -85,12 +85,25 @@
                         <div class="row ps-2">
                             <h6 class="text-dark text-opacity-50  pb-2">
                                 List Price:
-                                <span class="text-decoration-line-through">
-                                    @Model.Product.ListPrice.ToString("c")
-                                </span>
+
+                                @if (@Model.Product.Price100 > 0)
+                                {
+
+
+                                    <span class="text-decoration-line-through">
+                                        @Model.Product.ListPrice.ToString("c")
+                                    </span>
+                                }
+
+                                else
+                                {
+                                    <span class="text-decoration">
+                                        @Model.Product.ListPrice.ToString("c")
+                                    </span>
+                                }
                             </h6>
                         </div>
-                        <div class="row text-center ps-2">
+                    @*     <div class="row text-center ps-2">
                             <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
                                 <div class="text-dark text-opacity-50 fw-semibold">Quantity</div>
                             </div>
@@ -103,21 +116,31 @@
                             <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
                                 <div class="text-dark text-opacity-50 fw-semibold">100+</div>
                             </div>
-                        </div>
+                        </div> *@
+
+
+                         @if (@Model.Product.Price100 > 0)
+                                {
+                           
+
                         <div class="row text-center ps-2">
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>Price</div>
+                                <div>Offer Price</div>
                             </div>
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>@Model.Product.Price.ToString("c")</div>
+                                    <div>@Model.Product.Price100.ToString("c")</div>
                             </div>
-                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+
+                               
+
+                           @*  <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
                                 <div>@Model.Product.Price50.ToString("c")</div>
                             </div>
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
                                 <div>@Model.Product.Price100.ToString("c")</div>
-                            </div>
+                            </div> *@
                         </div>
+                        }
                         <div class="row pl-2 my-3">
                             <p class="text-secondary lh-sm">@Html.Raw(Model.Product.Description)</p>
                         </div>

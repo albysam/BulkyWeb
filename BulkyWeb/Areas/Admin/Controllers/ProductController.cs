@@ -66,6 +66,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Upsert(ProductVM productVM, List<IFormFile>? files)
         {
+            ModelState.Remove("Price50, Price100");
+        
             if (ModelState.IsValid)
             {
                 if (productVM.Product.Id == 0)

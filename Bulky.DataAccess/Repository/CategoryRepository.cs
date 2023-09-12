@@ -17,7 +17,11 @@ namespace Bulky.DataAccess.Repository
         {
             _db= db;
         }
-       
+
+        public Category? FirstOrDefault(Func<object, bool> value)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Update(Category obj)
         {

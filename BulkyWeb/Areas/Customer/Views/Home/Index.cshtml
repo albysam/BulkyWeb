@@ -24,15 +24,39 @@
 
                         </div>
                             <div class="pl-1">
+                                @if (product.Price100 > 0)
+                                {
+                                <p class="text-dark text-opacity-75 text-center mb-0">Price:
+                                   
+                                    <span class="text-decoration-line-through">
+                                  
+                                            @product.ListPrice.ToString("c")</span></p>
+                                }
 
-                                <p class="text-dark text-opacity-75 text-center mb-0">List Price: <span class="text-decoration-line-through">@product.ListPrice.ToString("c")</span></p>
+                                else
+                                {
+                                    <p class="text-dark text-opacity-75 text-center mb-0">
+                                        Price:
+
+                                      
+
+                                            @product.ListPrice.ToString("c")
+                                     
+                                    </p>
+                                }
 
                             </div>
+
+                            @if (product.Price100 > 0)
+                            {
                             <div class="pl-1">
 
-                                <p class="text-dark text-opacity-75 text-center mb-0">As low as: <span>@product.Price100.ToString("c")</span></p>
+                                <p class="text-dark text-opacity-75 text-center mb-0">Offer Price: <span>@product.Price100.ToString("c")</span></p>
 
                             </div>
+                            }
+
+                           
                     </div>
 
                     <div>

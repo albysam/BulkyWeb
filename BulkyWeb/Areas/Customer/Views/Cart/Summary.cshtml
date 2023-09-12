@@ -100,14 +100,25 @@
 									<strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
 								</li>
 							</ul>
+
+
+							<input id="COD" type="radio" name="COD" value="COD" />
+							<labelforlabelfor ="COD">Cash on Delivery</label>
+
 						</div>
+
+						
+					
+						
+
+
 					</div>
 				</div>
 
 
 				<div class="card-footer">
 					<div class="row">
-						<div class="col-12 col-md-8 pt-2">
+						<div class="col-12 col-md-8 pt-4">
 							<p style="color:maroon; font-size:14px;">
 								Estimate Arrival Date:
 								@DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()

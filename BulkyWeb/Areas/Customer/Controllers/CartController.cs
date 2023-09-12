@@ -1,6 +1,7 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
+using Bulky.Utility;
 using BulkyWeb.Area.Customer.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
     {
 
         private readonly IUnitOfWork _unitOfWork;
+        [BindProperty]
         public ShoppingCartVM ShoppingCartVM { get; set; }
         public CartController(IUnitOfWork unitOfWork)
         {
@@ -82,6 +84,88 @@ namespace BulkyWeb.Areas.Customer.Controllers
             return View(ShoppingCartVM);
         }
 
+
+
+
+        [HttpPost]
+        [ActionName("Summary")]
+        public IActionResult SummaryPost()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+
+            ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
+            includeProperties: "Product");
+
+            ShoppingCartVM.OrderHeader.OrderDatec = System.DateTime.Now;
+            ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
+            ShoppingCartVM.OrderHeader.PaymentIntentId = "CashonDelivery";
+
+            //ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+
+            ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+
+
+            foreach (var cart in ShoppingCartVM.ShoppingCartList)
+            {
+                cart.Price = GetPriceBasedOnQuantity(cart);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+            }
+
+
+            //if (applicationUser.StreetAddress == null)
+               
+            //    {
+            //    ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+            //    ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
+            //}
+            //else
+            //{
+                ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPayment;
+                ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;
+            //}
+
+
+
+            _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            _unitOfWork.Save();
+
+
+
+
+            foreach(var cart in ShoppingCartVM.ShoppingCartList)
+            {
+                OrderDetail orderDetail = new()
+                {
+                ProductId = cart.ProductId,
+                OrderHeaderId = ShoppingCartVM.OrderHeader.Id,
+                Price = cart.Price,
+                Count = cart.Count
+                };
+
+                _unitOfWork.OrderDetail.Add(orderDetail);
+                _unitOfWork.Save();
+            }
+
+            //if (applicationUser.StreetAddress == null)
+
+            //{
+            //    ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+            //    ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
+            //}
+
+            return RedirectToAction(nameof(OrderConfirmation), new { id=ShoppingCartVM.OrderHeader.Id});
+        }
+
+        
+
+        public IActionResult OrderConfirmation(int id)
+        {
+            return View(id);
+        }
+
+
         public IActionResult Plus(int cartId)
         {
             var cartFromDb = _unitOfWork.ShoppingCart.Get(u=>u.Id == cartId);
@@ -125,22 +209,33 @@ namespace BulkyWeb.Areas.Customer.Controllers
         }
 
         private double GetPriceBasedOnQuantity(ShoppingCart shoppingCart) {
-        if(shoppingCart.Count <= 50) {
-            return shoppingCart.Product.Price;
+
+            if (shoppingCart.Product.Price100 > 0)
+            {
+                return shoppingCart.Product.Price100;
             }
 
-            else 
-               
+            else
             {
-                if (shoppingCart.Count <= 100)
-                {
-                    return shoppingCart.Product.Price50;
-                }
-                else
-                {
-                    return shoppingCart.Product.Price100;
-                }
+                return shoppingCart.Product.ListPrice;
             }
+
+        //if(shoppingCart.Count <= 50) {
+        //    return shoppingCart.Product.Price;
+        //    }
+
+                //    else 
+
+                //    {
+                //        if (shoppingCart.Count <= 100)
+                //        {
+                //            return shoppingCart.Product.Price50;
+                //        }
+                //        else
+                //        {
+                //            return shoppingCart.Product.Price100;
+                //        }
+                //    }
 
 
         }
