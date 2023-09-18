@@ -5,6 +5,7 @@ using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using System.Security.Claims;
 
 namespace BulkyWeb.Areas.Admin.Controllers
@@ -89,8 +90,14 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
             }
 			_unitOfWork.OrderHeader.Update(orderHeader);
 			_unitOfWork.Save();
-
+            if (orderHeader.PaymentMethod == SD.PaymentPayNow)
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.StatusShipped, SD.PaymentStatusCompleted);
+            }
+			else { 
             _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.StatusShipped);
+            }
+
             _unitOfWork.Save();
             TempData["Success"] = "Order Shipped Successfully.";
 
@@ -122,8 +129,8 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
             var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
            
             orderHeader.PaymentDate = DateTime.Now;
-           
-            _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.PaymentStatusCompleted);
+            
+           _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusShipped, SD.PaymentStatusCompleted);
             _unitOfWork.Save();
             TempData["Success"] = "Order Payment Successfully Completed.";
 
@@ -155,24 +162,30 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
 				objOrderHeaders = _unitOfWork.OrderHeader
 					.GetAll(u => u.ApplicationUserId == userId, includeProperties: "ApplicationUser");
 			}
-
+		
 			switch (status)
 			{
 				case "pending":
-					objOrderHeaders = objOrderHeaders.Where(u => u.PaymentStatus == SD.PaymentStatusDelayedPayment);
+					objOrderHeaders = objOrderHeaders.Where(u => u.PaymentStatus == SD.PaymentStatusDelayedPayment ||  u.PaymentStatus == SD.PaymentStatusPending);
 					break;
                 case "inprocess":
-                    objOrderHeaders = objOrderHeaders.Where(u => u.PaymentStatus == SD.StatusInProcess);
+                    objOrderHeaders = objOrderHeaders.Where(u => u.OrderStatus == SD.StatusInProcess);
                     break;
 
                 case "completed":
-                    objOrderHeaders = objOrderHeaders.Where(u => u.PaymentStatus == SD.StatusShipped);
+                    objOrderHeaders = objOrderHeaders.Where(u => u.PaymentStatus == SD.PaymentStatusCompleted);
                     break;
 
                 case "approved":
-                    objOrderHeaders = objOrderHeaders.Where(u => u.PaymentStatus == SD.StatusApproved);
+                    objOrderHeaders = objOrderHeaders.Where(u => u.PaymentStatus == SD.StatusApproved || u.OrderStatus == SD.StatusApproved);
                     break;
-				default:
+                case "cancelled":
+                    objOrderHeaders = objOrderHeaders.Where(u => u.OrderStatus == SD.StatusCancelled);
+                    break;
+                case "shipped":
+                    objOrderHeaders = objOrderHeaders.Where(u => u.OrderStatus == SD.StatusShipped);
+                    break;
+                default:
 					break;
 
             }

@@ -102,8 +102,53 @@
 							</ul>
 
 
-							<input id="COD" type="radio" name="COD" value="COD" />
-							<labelforlabelfor ="COD">Cash on Delivery</label>
+							
+							
+
+
+					
+
+
+
+
+
+
+
+							<div class="row my-3">
+								
+								
+
+								<div class="col-9">
+									<input id="COD" type="radio" value="@SD.PaymenCashonDelivery" asp-for="OrderHeader.PaymentMethod" />
+									<labelforlabelfor ="COD">
+										Cash on Delivery</label>
+								</div>
+							</div>
+
+
+							<div class="row my-1">
+
+								
+
+								<div class="col-9">
+									<input id="E_payment" type="radio" value="@SD.PaymentPayNow" asp-for="OrderHeader.PaymentMethod" />
+									<labelforlabelfor ="E_payment">
+										Pay Now</label>
+								</div>
+							</div>
+
+							
+						
+							
+
+
+							
+							
+
+							
+
+							@* <input id="COD" type="radio" name="COD" value="COD" />
+							<labelforlabelfor ="COD">Cash on Delivery</label> *@
 
 						</div>
 

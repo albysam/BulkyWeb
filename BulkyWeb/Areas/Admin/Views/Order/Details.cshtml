@@ -162,19 +162,19 @@
                                 </div>
                             </div>
 
-                            @*  <div class="row my-1">
+                            <div class="row my-1">
                             <div class="col-3">Session ID</div>
                             <div class="col-9">
 
                             <input asp-for="OrderHeader.SessionId" readonly type="text" class="form-control" />
 
                             </div>
-                            </div> *@
+                            </div> 
                             <div class="row my-1">
                                 <div class="col-3">Payment Type</div>
                                 <div class="col-9">
 
-                                    <input asp-for="OrderHeader.PaymentIntentId" readonly type="text" class="form-control" />
+                                    <input asp-for="OrderHeader.PaymentMethod" readonly type="text" class="form-control" />
 
                                 </div>
                             </div>
@@ -251,7 +251,7 @@
                             @if (User.IsInRole(SD.Role_Admin))
                             {
                                 @if (Model.OrderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment &&
-                               Model.OrderHeader.OrderStatus == SD.StatusShipped)
+                               Model.OrderHeader.OrderStatus == SD.StatusShipped && Model.OrderHeader.PaymentMethod == SD.PaymenCashonDelivery)
                                 {
                                     <button type="submit" class="btn btn-success form-control my-1">Pay Now </button>
                                 }
@@ -267,14 +267,14 @@
                                     <button type="submit" asp-action="ShipOrder" onclick="return validateInput()" class="btn btn-primary form-control my-1">Ship Order</button>
                                 }
 
-                                @if (Model.OrderHeader.OrderStatus != SD.StatusRefunded &&
+                              @*   @if (Model.OrderHeader.OrderStatus != SD.StatusRefunded &&
                                Model.OrderHeader.OrderStatus != SD.StatusCancelled &&
                                Model.OrderHeader.OrderStatus != SD.StatusShipped)
 
 
-                                {
+                                { *@
                                     <button asp-action="CancelOrder" type="submit" class="btn btn-danger form-control my-1">Cancel Order</button>
-                                }
+                               @*  } *@
                             }
                         </div>
                     </div>

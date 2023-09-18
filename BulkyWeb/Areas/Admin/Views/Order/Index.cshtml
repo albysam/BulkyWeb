@@ -1,5 +1,34 @@
 ﻿@{
     var status = Context.Request.Query["status"];
+    var shipped = "text-primary";
+    var pending = "text-primary";
+    var inprocess = "text-primary";
+    var completed = "text-primary";
+    var approved = "text-primary";
+    var cancelled = "text-primary";
+    var all = "text-primary";
+
+    switch (status)
+    {
+        case "pending":
+            pending = "action text-white bg-primary";
+            break;
+        case "inprocess":
+            inprocess = "action text-white bg-primary";
+            break;
+        case "completed":
+            completed = "action text-white bg-primary";
+            break;
+        case "approved":
+            approved = "action text-white bg-primary";
+            break;
+        case "shipped":
+            shipped = "action text-white bg-primary";
+            break;
+        default:
+            all = "action text-white bg-primary";
+            break;
+    }
 }
 <div class="card shadow border-0 my-4">
     <div  class="card-header bg-secondary bg-gradient m-lg-0 py-3">
@@ -10,12 +39,42 @@
         </div>
     </div>
     <div class="card-body p-4">
+        <div class="d-flex justify-content-between pb-5 pt-2" >
+<span></span>
+            <ul class="list-group list-group-horizontal-sm">
+            <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="inprocess">
+                <li class="list-group-item @inprocess">In Process</li>
+            </a>
+
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="pending">
+                <li class="list-group-item @pending">Payment Pending</li>
+                </a>
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="completed">
+                <li class="list-group-item @completed">Completed</li>
+                </a>
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="approved">
+                <li class="list-group-item @approved">Approved</li>
+                </a>
+               @*  <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="shipped">
+                <li class="list-group-item @shipped">Shipped</li>
+                </a> *@
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="cancelled">
+                <li class="list-group-item @cancelled">Cancelled</li>
+                </a>
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="all">
+                <li class="list-group-item @all">All</li>
+                </a>
+            </ul>
+
+        </div>
+
+
     <table id="tblData" class="table table-bordered table-striped" style="width:100%">
         <thead>
             <tr>
-                <th>
+               @*  <th>
                     ID
-                </th>
+                </th> *@
                 <th>
                     Name
                 </th>
@@ -28,11 +87,15 @@
                     Email
                 </th>
                 <th>
-                    Status
+                    Order Status
                 </th>
+                    <th>
+                        Payment Status
+                    </th>
+                    <th>Payment Type</th>
                 <th>Total</th>
-                <th></th>
-
+               
+                    <th></th>
             </tr>
         </thead>
 

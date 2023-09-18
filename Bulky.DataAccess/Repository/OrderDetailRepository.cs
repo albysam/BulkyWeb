@@ -23,5 +23,15 @@ namespace Bulky.DataAccess.Repository
         {
             _db.OrderDetails.Update(obj);
         }
+
+        public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateStripePaymentID(int id, string sessionId, string paymentIntentId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
