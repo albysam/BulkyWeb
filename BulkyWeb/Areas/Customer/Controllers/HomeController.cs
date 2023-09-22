@@ -54,22 +54,34 @@ namespace BulkyWeb.Area.Customer.Controllers
             ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId &&
             u.ProductId == shoppingCart.ProductId);
 
-
-            if(cartFromDb != null)
+            if (cartFromDb != null)
             {
                 cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
             }
 
-            else {
+            else
+            {
 
-
-            _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
             }
 
-            TempData["success"] = "Cart updated Successfully";
-            _unitOfWork.Save();
 
+            //STOCK MANAGEMENT
+            var productFromDb = _unitOfWork.Product.Get(u => u.Id == shoppingCart.ProductId);
+
+            if (shoppingCart.Count > productFromDb.Price)
+            {
+                TempData["success"] = "Not enough stock available";
+
+
+            }
+
+            else
+            {
+                TempData["success"] = "Cart updated Successfully";
+                _unitOfWork.Save();
+            }
             return RedirectToAction(nameof(Index));
         }
 

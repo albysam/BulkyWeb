@@ -2,10 +2,12 @@
 using Bulky.Models;
 using Bulky.Models.ViewModels;
 using Bulky.Utility;
+using MailKit.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
+using Stripe.Issuing;
 using System.Security.Claims;
 
 namespace BulkyWeb.Areas.Admin.Controllers
@@ -37,6 +39,10 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
 
             return View(OrderVM);
         }
+
+
+
+
 		[HttpPost]
 		[Authorize(Roles = SD.Role_Admin)]
         public IActionResult UpdateOrderDetail()
@@ -53,9 +59,14 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
 
 			if (!string.IsNullOrEmpty(OrderVM.OrderHeader.TrackingNumber))
 			{
-				orderHeaderFromDb.Carrier = OrderVM.OrderHeader.TrackingNumber;
+				orderHeaderFromDb.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
 			}
-			_unitOfWork.OrderHeader.Update(orderHeaderFromDb);
+
+            if (!string.IsNullOrEmpty(OrderVM.OrderHeader.Carrier))
+            {
+                orderHeaderFromDb.Carrier = OrderVM.OrderHeader.Carrier;
+            }
+            _unitOfWork.OrderHeader.Update(orderHeaderFromDb);
 			_unitOfWork.Save();
 
 			TempData["Success"] = "Order Details Updated Successfully.";
@@ -107,10 +118,20 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
         
              [HttpPost]
         [Authorize(Roles = SD.Role_Admin)]
-		public IActionResult CancelOrder()
+		public IActionResult CancelOrder(int orderId)
 		{
 			var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
 			_unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
+
+
+          //STOCK MANAGEMENT 
+           
+                var orderDetails= _unitOfWork.OrderDetail.Get(u => u.OrderHeaderId == OrderVM.OrderHeader.Id);
+            var productFromDb = _unitOfWork.Product.Get(u => u.Id == orderDetails.ProductId);
+
+            productFromDb.Price = productFromDb.Price + orderDetails.Count;
+            _unitOfWork.Product.Update(productFromDb);
+            //
             _unitOfWork.Save();
             TempData["Success"] = "Order Cancelled Successfully.";
 

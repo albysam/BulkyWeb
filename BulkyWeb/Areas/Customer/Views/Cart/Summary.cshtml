@@ -94,23 +94,26 @@
 									<span class="text-muted">@((details.Price*details.Count).ToString("c")) </span>
 								</li>
 								}
+@* 
+								<li class="list-group-item d-flex justify-content-between">
+										<input type="text" id="SelectedCouponCode" asp-for="SelectedCouponCode" />
+									
+									
+								
+									<a asp-action="applyCoupon" id="applyCoupon" asp-route-cartId="@details.Id" class="btn btn-outline-primary bg-gradient py-2">
+										
+									Apply Coupon</a> 
+									
+								</li> *@
+
 
 								<li class="list-group-item d-flex justify-content-between bg-light">
 									<small class="text-info">Total (USD)</small>
-									<strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
+								@* 	<strong id="totalAmount" class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong> *@
+									<strong id="totalAmount" class="text-info">@Model.OrderHeader.OrderTotal</strong>
 								</li>
+								
 							</ul>
-
-
-							
-							
-
-
-					
-
-
-
-
 
 
 
@@ -138,13 +141,6 @@
 							</div>
 
 							
-						
-							
-
-
-							
-							
-
 							
 
 							@* <input id="COD" type="radio" name="COD" value="COD" />

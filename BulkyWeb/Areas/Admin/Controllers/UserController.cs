@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
@@ -61,6 +62,20 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return Json(new { success = true, message = "Operation Successfull" });
         }
 
+        [HttpPost]
+        public IActionResult Delete([FromBody] string id)
+        {
+
+           var objFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+            _db.ApplicationUsers.Remove(objFromDb);
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Delete Successfull" });
+        }
 
         #endregion
 
