@@ -117,7 +117,7 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
 
         
              [HttpPost]
-        [Authorize(Roles = SD.Role_Admin)]
+       // [Authorize(Roles = SD.Role_Admin)]
 		public IActionResult CancelOrder(int orderId)
 		{
 			var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);

@@ -76,10 +76,22 @@ namespace BulkyWeb.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Category updated successfully";
-                return RedirectToAction("Index");
+				Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Name == obj.Name);
+
+				if (categoryFromDb == null)
+				{
+					_unitOfWork.Category.Update(obj);
+					_unitOfWork.Save();
+					TempData["success"] = "Category updated successfully";
+					return RedirectToAction("Index");
+				}
+				else
+				{
+					ModelState.AddModelError("Name", "Category Name already exists.");
+				}
+
+
+				
             }
             return View();
         }

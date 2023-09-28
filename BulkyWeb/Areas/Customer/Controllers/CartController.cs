@@ -13,6 +13,7 @@ using System.Text.Encodings.Web;
 using Stripe;
 using Stripe.Checkout;
 using Bulky.DataAccess.Repository;
+using Stripe.Issuing;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -57,8 +58,39 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             return View(ShoppingCartVM);
         }
+		public IActionResult Address()
+		{
+			
+			return View(); 
+		}
 
-        public IActionResult Summary()
+		[HttpPost]
+		[ActionName("Address")]
+		public IActionResult SaveAddress()
+		{
+            //if (ModelState.IsValid)
+            //{
+
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                ShoppingCartVM.Address.user_Id = userId;
+                ShoppingCartVM.Address.Status = 1;
+
+			var addressFromDb = _unitOfWork.Address.Get(u => u.user_Id == userId && u.Status == 1);
+            if(addressFromDb != null) {
+			addressFromDb.Status = 0;
+			_unitOfWork.Address.Update(addressFromDb);
+			}
+
+			_unitOfWork.Address.Add(ShoppingCartVM.Address);
+                _unitOfWork.Save();
+            //}
+			return RedirectToAction("Summary");
+		}
+
+
+
+		public IActionResult Summary()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -69,18 +101,36 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 includeProperties: "Product"),
                 OrderHeader = new()
             };
+
+
+
+
+
+
             ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
 
 
             ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
             ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
+
+            ShoppingCartVM.Address = _unitOfWork.Address.Get(u => u.user_Id == userId && u.Status == 1);
+            if(ShoppingCartVM.Address != null)
+            {
+				ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.Address.StreetAddress;
+				ShoppingCartVM.OrderHeader.City = ShoppingCartVM.Address.City;
+				ShoppingCartVM.OrderHeader.State = ShoppingCartVM.Address.State;
+				ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.Address.PostalCode;
+			}
+
+            else { 
+
             ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.ApplicationUser.StreetAddress;
             ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City;
             ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.ApplicationUser.State;
             ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
+			}
 
-
-            foreach (var cart in ShoppingCartVM.ShoppingCartList)
+			foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart);
                 ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);

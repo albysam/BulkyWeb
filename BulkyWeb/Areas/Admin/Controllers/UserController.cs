@@ -34,7 +34,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<ApplicationUser> objUserList = _db.ApplicationUsers.ToList();
+            List<ApplicationUser> objUserList = _db.ApplicationUsers.Where(u => u.Name != "Admin").ToList();
             return Json(new { data = objUserList });
         }
 
@@ -62,23 +62,33 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return Json(new { success = true, message = "Operation Successfull" });
         }
 
-        [HttpPost]
-        public IActionResult Delete([FromBody] string id)
-        {
 
-           var objFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
-            if (objFromDb == null)
-            {
-                return Json(new { success = false, message = "Error while deleting" });
-            }
-            _db.ApplicationUsers.Remove(objFromDb);
-            _db.SaveChanges();
+		[HttpPost]
+		public IActionResult DeleteRestore([FromBody] string id)
+		{
 
-            return Json(new { success = true, message = "Delete Successfull" });
-        }
+			var objFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+			if (objFromDb == null)
+			{
+				return Json(new { success = false, message = "Error while Locking/Unlocking" });
+			}
+			if (objFromDb.AccessFailedCount != 0)
+			{
+				//unlock if locked
+				objFromDb.AccessFailedCount = 1;
+			}
+			else
+			{
+				objFromDb.AccessFailedCount = 0;
+			}
+			_db.SaveChanges();
 
-        #endregion
+			return Json(new { success = true, message = "Operation Successfull" });
+		}
 
 
-    }
+		#endregion
+
+
+	}
 }

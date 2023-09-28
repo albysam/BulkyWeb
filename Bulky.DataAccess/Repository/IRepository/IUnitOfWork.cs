@@ -23,7 +23,8 @@ namespace Bulky.DataAccess.Repository.IRepository
 
         IProductImageRepository ProductImage { get; }
         ICouponRepository Coupon { get; }
+		IAddressRepository Address { get; }
 
-        void Save();
+		void Save();
     }
 }

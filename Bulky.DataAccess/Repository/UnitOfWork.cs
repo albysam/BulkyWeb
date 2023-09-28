@@ -29,8 +29,9 @@ namespace Bulky.DataAccess.Repository
         public IProductImageRepository ProductImage { get; private set; }
 
         public ICouponRepository Coupon { get; private set; }
+		public IAddressRepository Address { get; private set; }
 
-        public unitOfWork(ApplicationDbContext db)
+		public unitOfWork(ApplicationDbContext db)
         {
             _db = db;
             ProductImage = new ProductImageRepository(_db);
@@ -42,9 +43,10 @@ namespace Bulky.DataAccess.Repository
             OrderDetail = new OrderDetailRepository(_db);
             OrderHeader = new OrderHeaderRepository(_db);
             Coupon = new CouponRepository(_db);
+			Address = new AddressRepository(_db);
 
 
-        }
+		}
 
        
       

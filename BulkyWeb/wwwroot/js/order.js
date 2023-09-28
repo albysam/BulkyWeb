@@ -41,7 +41,7 @@ function loadDataTable(status) {
     dataTable = $('#tblData').DataTable({
         "ajax": { url:'/admin/order/getall?status=' + status},
         "columns": [
-            /*{ data: 'id', "width": "5%" },*/
+            { data: 'id', "width": "5%" },
             { data: 'name', "width": "15%" },
             { data: 'phoneNumber', "width": "10%" },
             { data: 'applicationUser.email', "width": "15%" },
