@@ -11,8 +11,9 @@ namespace Bulky.Models.ViewModels
         public IEnumerable<ShoppingCart> ShoppingCartList { get; set; }
 
         public OrderHeader OrderHeader { get; set; }
-		public Address Address { get; set; }
-		public Coupon Coupon { get; set; }
+        public Address Address { get; set; }
+        //public IEnumerable<Address> AddressList { get; set; }
+        public Coupon Coupon { get; set; }
 
 		public string SelectedCouponCode { get; set; }
 	}

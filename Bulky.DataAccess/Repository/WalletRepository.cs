@@ -10,27 +10,25 @@ using System.Threading.Tasks;
 
 namespace Bulky.DataAccess.Repository
 {
-    public class AddressRepository : Repository<Address>, IAddressRepository
+    public class WalletRepository : Repository<Wallet>, IWalletRepository
 	{
         private ApplicationDbContext _db;
-        public AddressRepository(ApplicationDbContext db) : base(db) 
+        public WalletRepository(ApplicationDbContext db) : base(db) 
         {
             _db= db;
         }
-
 		public void Add(Wallet wallet)
 		{
 			throw new NotImplementedException();
 		}
-
-		public Address? FirstOrDefault(Func<object, bool> value)
+		public Wallet? FirstOrDefault(Func<object, bool> value)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Address obj)
+        public void Update(Wallet obj)
         {
-            _db.Addresses.Update(obj);
+            _db.Wallet.Update(obj);
         }
     }
 }

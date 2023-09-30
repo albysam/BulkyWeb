@@ -4,6 +4,7 @@ using Bulky.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BulkyWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230930101609_updateAddresstableToDb")]
+    partial class updateAddresstableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("user_Id");
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("Bulky.Models.Category", b =>
@@ -74,7 +77,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -127,7 +130,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Coupons", (string)null);
+                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("Bulky.Models.OrderDetail", b =>
@@ -156,7 +159,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Bulky.Models.OrderHeader", b =>
@@ -235,7 +238,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("OrderHeaders", (string)null);
+                    b.ToTable("OrderHeaders");
                 });
 
             modelBuilder.Entity("Bulky.Models.Product", b =>
@@ -280,7 +283,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
 
                     b.HasData(
                         new
@@ -382,7 +385,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("Bulky.Models.ShoppingCart", b =>
@@ -409,28 +412,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ShoppingCart", (string)null);
-                });
-
-            modelBuilder.Entity("Bulky.Models.Wallet", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("WalletBalance")
-                        .HasColumnType("float");
-
-                    b.Property<string>("userId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("Wallet", (string)null);
+                    b.ToTable("ShoppingCart");
                 });
 
             modelBuilder.Entity("Bulky.Models.Wishlist", b =>
@@ -457,7 +439,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Wishlist", (string)null);
+                    b.ToTable("Wishlist");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -769,15 +751,6 @@ namespace BulkyWeb.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Bulky.Models.Wallet", b =>
-                {
-                    b.HasOne("Bulky.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("userId");
-
-                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Bulky.Models.Wishlist", b =>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Bulky.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,10 +17,14 @@ namespace Bulky.Models
 
 		[Required]
 		public string? user_Id { get; set; }
+		[ForeignKey("user_Id")]
+		public ApplicationUser applicationUser { get; set; }
 		public string? StreetAddress { get; set; }
 		public string? City { get; set; }
 		public string? State { get; set; }
 		public string? PostalCode { get; set; }
 		public int? Status { get; set; }
+
+		
 	}
 }

@@ -84,16 +84,19 @@
 								<div class="col-3">
 									
 								</div>
-								
+								<div class="row">
 									<div class="col-12 col-md-4">
 									<a class="btn btn-primary" id="openModalButton">Add Address</a>
 
 
-									<!-- Add a button to trigger the modal -->
-									
-									@* <button class="btn btn-primary" id="openModalButton">Open Modal</button> *@
 
-								@* 	<button class="btn btn-primary" id="openModalButton">Open Modal</button> *@
+									</div>
+
+									<div class="col-12 col-md-4">
+										
+										<a class="btn btn-primary" id="openModalButtons">Select Address</a>
+									</div>
+
 
 									</div>
 								
@@ -201,13 +204,14 @@
 </form>
 
 
-<!-- Define the modal -->
-<div class="modal fade" id="myModal" style="width:150%;">
-	<div class="modal-dialog">
+<!-- First Modal -->
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			
-			<div class="modal-body" id="modalBody">
-				<!-- Product details will be loaded here -->
+			<div class="modal-body">
+				<!-- Add address form or content here -->
+
 
 
 				<div class="card shadow border-0 mt-4">
@@ -216,17 +220,19 @@
 					</div>
 					<div class="card-body p-4">
 						<form method="post" class="row" asp-action="Address" enctype="multipart/form-data">
+
+							 
+
 							<input asp-for="@Model.Address.user_Id" hidden />
 
-							<div class="row">
-								<div class="col-10">
+							
 									<div class="border p-3">
 
 										<div class="form-floating py-2 col-12">
-											<input asp-for="@Model.Address.StreetAddress" class="form-control border-0 shadow" value=""/>
+											<input asp-for="@Model.Address.StreetAddress" class="form-control border-0 shadow" value="" />
 											<label asp-for="@Model.Address.StreetAddress" class="ms-2"></label>
 
-											<span asp-validation-for="@Model.Address.StreetAddress" class="text-danger" ></span>
+											<span asp-validation-for="@Model.Address.StreetAddress" class="text-danger"></span>
 										</div>
 
 										<div class="form-floating py-2 col-12">
@@ -255,7 +261,7 @@
 											<div class="col-6 col-md-3">
 												<button type="submit" class="btn btn-outline-primary from-control">Create</button>
 											</div>
-											
+
 										</div>
 
 									</div>
@@ -266,6 +272,29 @@
 					</div>
 				</div>
 
+
+
+
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary close-modal-btn">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Second Modal -->
+<div id="myModals" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalsLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+			<div class="modal-body">
+				<!-- Select address form or content here -->
+
+				<partial name="DisplayData" />
+
+				<!------------------------------------------>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary close-modal-btn">Close</button>
@@ -275,9 +304,6 @@
 </div>
 
 
-
-
-
 @section Scripts{
 
     <partial name="_ValidationScriptsPartial" />
@@ -285,18 +311,9 @@
 	$(document).ready(function () {
 		$('#openModalButton').click(function () {
 			$('#myModal').modal('show');
-			loadDetails();
+			
 		});
 
-		function loadDetails() {
-			$.ajax({
-				url: '/Cart/Address',
-				type: 'GET',
-				success: function (result) {
-					$('#modalBody').html(result);
-				}
-			});
-		}
 	});
 </script>
 	<script>
@@ -307,5 +324,29 @@
 			});
 		});
 	</script>
+
+
+
+	<script>
+		$(document).ready(function () {
+			$('#openModalButtons').click(function () {
+				$('#myModals').modal('show');
+
+			});
+
+		});
+	</script>
+	<script>
+		$(document).ready(function () {
+			// Add a click event handler to the close button inside the modal
+			$('#myModals').on('click', '.close-modal-btn', function () {
+				$('#myModals').modal('hide'); // Hide the modal
+			});
+		});
+	</script>
+
+
+
+
 }
 

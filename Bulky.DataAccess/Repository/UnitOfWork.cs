@@ -30,6 +30,7 @@ namespace Bulky.DataAccess.Repository
 
         public ICouponRepository Coupon { get; private set; }
 		public IAddressRepository Address { get; private set; }
+		public IWalletRepository Wallet { get; private set; }
 
 		public unitOfWork(ApplicationDbContext db)
         {
@@ -44,6 +45,7 @@ namespace Bulky.DataAccess.Repository
             OrderHeader = new OrderHeaderRepository(_db);
             Coupon = new CouponRepository(_db);
 			Address = new AddressRepository(_db);
+			Wallet = new WalletRepository(_db);
 
 
 		}

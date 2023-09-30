@@ -6,6 +6,7 @@ using MailKit.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Issuing;
 using System.Security.Claims;
@@ -131,8 +132,25 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
 
             productFromDb.Price = productFromDb.Price + orderDetails.Count;
             _unitOfWork.Product.Update(productFromDb);
-            //
-            _unitOfWork.Save();
+			//Wallet
+			
+			var walletFromDb = _unitOfWork.Wallet.Get(u => u.userId == orderHeader.ApplicationUserId);
+			if (walletFromDb != null)
+			{
+				OrderVM.Wallet.WalletBalance += orderHeader.OrderTotal;
+				_unitOfWork.Wallet.Update(walletFromDb);
+			}
+			else {
+				//OrderVM.Wallet.userId = orderHeader.ApplicationUserId;
+				OrderVM.Wallet.WalletBalance = orderHeader.OrderTotal;
+			}
+			_unitOfWork.Wallet.Add(OrderVM.Wallet);
+			
+
+
+			//////
+
+			_unitOfWork.Save();
             TempData["Success"] = "Order Cancelled Successfully.";
 
             return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });

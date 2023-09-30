@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using Bulky.DataAccess.Repository.IRepository;
 namespace Bulky.DataAccess.Repository.IRepository
 {
-    public interface IAddressRepository : IRepository<Address>
+    public interface IWalletRepository : IRepository<Wallet>
     {
 		void Add(Wallet wallet);
-		Address? FirstOrDefault(Func<object, bool> value);
-        void Update(Address obj);
-		
-	}
+		Wallet? FirstOrDefault(Func<object, bool> value);
+        void Update(Wallet obj);
+      
+    }
 }

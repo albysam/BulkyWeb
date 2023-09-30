@@ -14,6 +14,8 @@ using Stripe;
 using Stripe.Checkout;
 using Bulky.DataAccess.Repository;
 using Stripe.Issuing;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -58,35 +60,107 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             return View(ShoppingCartVM);
         }
-		public IActionResult Address()
-		{
-			
-			return View(); 
-		}
 
-		[HttpPost]
-		[ActionName("Address")]
-		public IActionResult SaveAddress()
-		{
-            //if (ModelState.IsValid)
-            //{
 
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-                ShoppingCartVM.Address.user_Id = userId;
-                ShoppingCartVM.Address.Status = 1;
+        [HttpPost]
 
-			var addressFromDb = _unitOfWork.Address.Get(u => u.user_Id == userId && u.Status == 1);
-            if(addressFromDb != null) {
-			addressFromDb.Status = 0;
-			_unitOfWork.Address.Update(addressFromDb);
-			}
+        public IActionResult Address()
+        {
 
-			_unitOfWork.Address.Add(ShoppingCartVM.Address);
-                _unitOfWork.Save();
-            //}
-			return RedirectToAction("Summary");
-		}
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ShoppingCartVM.Address.user_Id = userId;
+            ShoppingCartVM.Address.Status = 1;
+
+            var addressFromDb = _unitOfWork.Address.Get(u => u.user_Id == userId && u.Status == 1);
+            if (addressFromDb != null)
+            {
+                addressFromDb.Status = 0;
+                _unitOfWork.Address.Update(addressFromDb);
+            }
+
+            if (ShoppingCartVM.Address.StreetAddress == null || ShoppingCartVM.Address.State == null || ShoppingCartVM.Address.City == null || ShoppingCartVM.Address.PostalCode == null)
+            {
+                TempData["success"] = "All fields are required";
+                return RedirectToAction(nameof(Summary));
+            }
+
+
+
+
+            _unitOfWork.Address.Add(ShoppingCartVM.Address);
+            _unitOfWork.Save();
+
+            return RedirectToAction("Summary");
+        }
+
+        public IActionResult AddressView()
+        {
+            List<Bulky.Models.Address> objProductList = _unitOfWork.Address.GetAll().ToList();
+
+            return View(objProductList);
+        }
+
+
+        //[HttpPost]
+
+        //public IActionResult Address()
+        //{
+
+
+        //	var claimsIdentity = (ClaimsIdentity)User.Identity;
+        //	var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+        //              var AddressList = _unitOfWork.Address.GetAll(u => u.user_Id == userId);
+
+
+        //	IEnumerable<Address> addresses = _unitOfWork.Address.GetAll();
+
+        //	foreach (var address in ShoppingCartVM.AddressList)
+        //          {
+        //		address.user_Id= userId;
+        //              address.Status = 1;
+        //		_unitOfWork.Address.Add(Address);
+        //	}
+
+
+
+
+
+        //	var addressFromDb = _unitOfWork.Address.Get(u => u.user_Id == userId && u.Status == 1);
+        //	if (addressFromDb != null)
+        //	{
+        //		addressFromDb.Status = 0;
+        //		_unitOfWork.Address.Update(addressFromDb);
+
+        //	}
+
+        //          if (ShoppingCartVM.Address.StreetAddress == null || ShoppingCartVM.Address.State == null || ShoppingCartVM.Address.City == null || ShoppingCartVM.Address.PostalCode == null)
+        //          {
+        //              TempData["success"] = "All fields are required";
+        //              return RedirectToAction(nameof(Summary));
+        //          }
+
+
+
+
+
+        //          _unitOfWork.Save();
+
+        //	return RedirectToAction("Summary");
+        //}
+
+  //      public IActionResult AddressView()
+		//{
+		//	List<Bulky.Models.Address> objProductList = _unitOfWork.Address.GetAll().ToList();
+
+		//	return View(objProductList);
+		//}
+
+
+
+
 
 
 

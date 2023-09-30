@@ -8,6 +8,7 @@ using Bulky.Utility;
 using Microsoft.Extensions.Options;
 using Bulky.DataAccess.DbInitializer;
 using Stripe;
+using BulkyWeb.Areas.Identity.Pages.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,8 @@ builder.Services.AddRazorPages();
 //builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IUnitOfWork, unitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-        var app = builder.Build();
+builder.Services.AddSingleton<OtpService>();
+var app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -54,11 +56,3 @@ app.MapRazorPages();
             pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
         app.Run();
-//   void SeedDatabase()
-//{
-//    using (var scope = app.Services.CreateScope())
-//    {
-//        var dbInitializer = scope.ServiceProvider.GetRequiredService<DbInitializer>();
-//        dbInitializer.Initialize();
-//    }
-//}

@@ -6,29 +6,39 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace Bulky.Utility
 {
     public class EmailSender : IEmailSender
     {
-        public Task SendEmailAsync(string email, string subject, string message)
+        public Task SendEmailAsync(string email, string subject, string otp)
         {
-            var mail = "albyjolly149@gmail.com";
-            var pw = "Happy@123@456";
-
-            var client = new SmtpClient("smtp.gmail.com", 587)
+            try
             {
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(mail, pw)
-            };
+                MailMessage message = new MailMessage();
+                SmtpClient smtpClient = new SmtpClient();
+                message.From = new MailAddress("albyjolly149@gmail.com");
+                message.To.Add(email);
+                message.Subject = subject;
+                message.IsBodyHtml = true;
+                // message.Body = confirmurl;
+                message.Body = otp;
 
-            return client.SendMailAsync(
-                new MailMessage(from: "albyjolly149@gmail.com",
-                                to: email,
-                                subject,
-                                message
-                                ));
+                smtpClient.Port = 587;
+                smtpClient.Host = "smtp.gmail.com";
+                smtpClient.EnableSsl = true;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential("albyjolly149@gmail.com", "ieivzgnukcrjdape");
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Send(message);
+                return Task.FromResult(true);
+            }
+            catch (Exception ex)
+            {
+
+                return Task.FromResult(false);
+            }
         }
     }
 }
