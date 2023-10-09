@@ -12,12 +12,10 @@ namespace Bulky.Models
     public class Wallet
     {
         public int Id { get; set; }
-        public string? userId { get; set; }
-        
+		
+		public string? userId { get; set; }
+       
         public double WalletBalance { get; set; }
-		[ForeignKey("userId")]
-		[ValidateNever]
-		public ApplicationUser ApplicationUser { get; set; }
 
 	}
 }

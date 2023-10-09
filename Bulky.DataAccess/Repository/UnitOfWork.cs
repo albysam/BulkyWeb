@@ -29,10 +29,15 @@ namespace Bulky.DataAccess.Repository
         public IProductImageRepository ProductImage { get; private set; }
 
         public ICouponRepository Coupon { get; private set; }
+		public IAppliedCouponRepository AppliedCoupon { get; private set; }
+
 		public IAddressRepository Address { get; private set; }
+
+		public IAddressNewRepository AddressNew { get; private set; }
 		public IWalletRepository Wallet { get; private set; }
 
-		public unitOfWork(ApplicationDbContext db)
+        public IWalletTotalRepository WalletTotal { get; private set; }
+        public unitOfWork(ApplicationDbContext db)
         {
             _db = db;
             ProductImage = new ProductImageRepository(_db);
@@ -44,11 +49,13 @@ namespace Bulky.DataAccess.Repository
             OrderDetail = new OrderDetailRepository(_db);
             OrderHeader = new OrderHeaderRepository(_db);
             Coupon = new CouponRepository(_db);
+            AppliedCoupon = new AppliedCouponRepository(_db);
 			Address = new AddressRepository(_db);
+			AddressNew = new AddressNewRepository(_db);
 			Wallet = new WalletRepository(_db);
+            WalletTotal = new WalletTotalRepository(_db);
 
-
-		}
+        }
 
        
       

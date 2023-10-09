@@ -35,9 +35,11 @@ namespace Bulky.Models
         public string? SessionId { get; set; }
 
         public string? PaymentIntentId { get; set; }
+		public double CancelTotal { get; set; }
+		public double ProductTotal { get; set; }
+		public double Coupon { get; set; }
 
-
-        [Required]
+		[Required]
         public string? PhoneNumber { get; set; }
         [Required]
         public string? StreetAddress { get; set; }

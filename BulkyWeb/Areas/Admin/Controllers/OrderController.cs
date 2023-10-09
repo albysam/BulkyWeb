@@ -1,4 +1,5 @@
-﻿using Bulky.DataAccess.Repository.IRepository;
+﻿using Bulky.DataAccess.Repository;
+using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
 using Bulky.Utility;
@@ -116,41 +117,112 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
             return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
         }
 
-        
-             [HttpPost]
-       // [Authorize(Roles = SD.Role_Admin)]
-		public IActionResult CancelOrder(int orderId)
-		{
-			var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
-			_unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
+
+        [HttpPost]
+        // [Authorize(Roles = SD.Role_Admin)]
+        public IActionResult CancelOrder(int orderId)
+        {
+            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id);
+            StripeConfiguration.ApiKey = "sk_test_51NdFMzSDcXY2QkDCxG0w3dmJ0QYNOAAJDoFV64JT1i1S96EQmjyvGtiqGmRfZuhXALKrRnr2mN4QqtU9WbfSiTDP00dKwu63sY";
+            if (orderHeader.PaymentMethod == SD.PaymentPayNow)
+                
+            {
+
+                if(orderHeader.PaymentStatus == SD.PaymentStatusApproved || orderHeader.PaymentStatus == SD.PaymentStatusCompleted) {
+              
+                var options = new RefundCreateOptions
+                {
+
+                    Reason = RefundReasons.RequestedByCustomer,
+                    PaymentIntent = orderHeader.PaymentIntentId
+                };
+
+                var service = new RefundService();
+                Refund refund = service.Create(options);
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded);
+            }
+
+                else
+                {
+
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
+                }
 
 
-          //STOCK MANAGEMENT 
+
+            }
+
+
            
-                var orderDetails= _unitOfWork.OrderDetail.Get(u => u.OrderHeaderId == OrderVM.OrderHeader.Id);
+
+            //Wallet
+          if (orderHeader.PaymentMethod == SD.PaymenCashonDelivery)
+            {
+
+            if (orderHeader.PaymentStatus == SD.PaymentStatusCompleted) { 
+
+
+            orderHeader.CancelTotal = orderHeader.OrderTotal;
+             
+
+                _unitOfWork.OrderHeader.Update(orderHeader);
+            _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.PaymentStatusRefunded);
+
+                
+                    var walletFromDb = _unitOfWork.WalletTotal.Get(u => u.UserId == orderHeader.ApplicationUserId);
+                    if (walletFromDb != null)
+                    {
+                        walletFromDb.WalletBalance += orderHeader.OrderTotal;
+                        _unitOfWork.WalletTotal.Update(walletFromDb);
+                    }
+
+                    else
+                    {
+                        WalletTotal wallet = new WalletTotal()
+                        {
+                            UserId = orderHeader.ApplicationUserId,
+                            WalletBalance = orderHeader.OrderTotal
+
+                        };
+                        _unitOfWork.WalletTotal.Add(wallet);
+                    }
+
+               
+            }
+                else
+                {
+
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
+                   
+                }
+               //WALLET PAYMENT
+               //
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+            //STOCK MANAGEMENT START
+
+            var orderDetails = _unitOfWork.OrderDetail.Get(u => u.OrderHeaderId == OrderVM.OrderHeader.Id);
             var productFromDb = _unitOfWork.Product.Get(u => u.Id == orderDetails.ProductId);
 
             productFromDb.Price = productFromDb.Price + orderDetails.Count;
             _unitOfWork.Product.Update(productFromDb);
-			//Wallet
-			
-			var walletFromDb = _unitOfWork.Wallet.Get(u => u.userId == orderHeader.ApplicationUserId);
-			if (walletFromDb != null)
-			{
-				OrderVM.Wallet.WalletBalance += orderHeader.OrderTotal;
-				_unitOfWork.Wallet.Update(walletFromDb);
-			}
-			else {
-				//OrderVM.Wallet.userId = orderHeader.ApplicationUserId;
-				OrderVM.Wallet.WalletBalance = orderHeader.OrderTotal;
-			}
-			_unitOfWork.Wallet.Add(OrderVM.Wallet);
-			
+            //STOCK MANAGEMENT END
 
+           
 
-			//////
-
-			_unitOfWork.Save();
+            _unitOfWork.Save();
             TempData["Success"] = "Order Cancelled Successfully.";
 
             return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
@@ -220,6 +292,9 @@ OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId, in
                     break;
                 case "cancelled":
                     objOrderHeaders = objOrderHeaders.Where(u => u.OrderStatus == SD.StatusCancelled);
+                    break;
+                case "refunded":
+                    objOrderHeaders = objOrderHeaders.Where(u => u.PaymentStatus == SD.PaymentStatusRefunded);
                     break;
                 case "shipped":
                     objOrderHeaders = objOrderHeaders.Where(u => u.OrderStatus == SD.StatusShipped);

@@ -9,7 +9,7 @@ namespace Bulky.DataAccess.Repository.IRepository
 {
     public interface IWalletRepository : IRepository<Wallet>
     {
-		void Add(Wallet wallet);
+		
 		Wallet? FirstOrDefault(Func<object, bool> value);
         void Update(Wallet obj);
       

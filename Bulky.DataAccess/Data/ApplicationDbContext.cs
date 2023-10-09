@@ -15,7 +15,9 @@ namespace Bulky.DataAccess.Data
         public DbSet<Category>? Categories { get; set; }
         public DbSet<Product>? Products { get; set; }
         public DbSet<Coupon>? Coupons { get; set; }
+		public DbSet<AppliedCoupon>? AppliedCoupon { get; set; }
 		public DbSet<Address>? Addresses { get; set; }
+		public DbSet<AddressNew>? AddressNew { get; set; }
 		public DbSet<ShoppingCart>? ShoppingCart { get; set; }
         public DbSet<Wishlist>? Wishlist { get; set; }
         public DbSet<ProductImage>? ProductImages { get; set; }
@@ -23,7 +25,9 @@ namespace Bulky.DataAccess.Data
         public DbSet<OrderHeader>? OrderHeaders { get; set; }
         public DbSet<OrderDetail>? OrderDetails { get; set; }
 		public DbSet<Wallet>? Wallet { get; set; }
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public DbSet<WalletTotal>? WalletTotal { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
            
            base.OnModelCreating(modelBuilder);

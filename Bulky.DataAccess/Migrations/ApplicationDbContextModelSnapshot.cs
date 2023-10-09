@@ -53,7 +53,77 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("user_Id");
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("Bulky.Models.AddressNew", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostalCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ShoppingCartId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StreetAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("ShoppingCartId");
+
+                    b.ToTable("AddressNew");
+                });
+
+            modelBuilder.Entity("Bulky.Models.AppliedCoupon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CouponId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MaxCartAmount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MinCartAmount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppliedCoupon");
                 });
 
             modelBuilder.Entity("Bulky.Models.Category", b =>
@@ -74,7 +144,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -127,7 +197,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Coupons", (string)null);
+                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("Bulky.Models.OrderDetail", b =>
@@ -156,7 +226,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Bulky.Models.OrderHeader", b =>
@@ -171,12 +241,18 @@ namespace BulkyWeb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<double>("CancelTotal")
+                        .HasColumnType("float");
+
                     b.Property<string>("Carrier")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Coupon")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -214,6 +290,9 @@ namespace BulkyWeb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("ProductTotal")
+                        .HasColumnType("float");
+
                     b.Property<string>("SessionId")
                         .HasColumnType("nvarchar(max)");
 
@@ -235,7 +314,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("OrderHeaders", (string)null);
+                    b.ToTable("OrderHeaders");
                 });
 
             modelBuilder.Entity("Bulky.Models.Product", b =>
@@ -280,7 +359,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
 
                     b.HasData(
                         new
@@ -382,7 +461,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("Bulky.Models.ShoppingCart", b =>
@@ -409,7 +488,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ShoppingCart", (string)null);
+                    b.ToTable("ShoppingCart");
                 });
 
             modelBuilder.Entity("Bulky.Models.Wallet", b =>
@@ -424,13 +503,35 @@ namespace BulkyWeb.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("userId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("userId");
+                    b.ToTable("Wallet");
+                });
 
-                    b.ToTable("Wallet", (string)null);
+            modelBuilder.Entity("Bulky.Models.WalletTotal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("WalletBalance")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("WalletTotal");
                 });
 
             modelBuilder.Entity("Bulky.Models.Wishlist", b =>
@@ -457,7 +558,7 @@ namespace BulkyWeb.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Wishlist", (string)null);
+                    b.ToTable("Wishlist");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -700,6 +801,21 @@ namespace BulkyWeb.Migrations
                     b.Navigation("applicationUser");
                 });
 
+            modelBuilder.Entity("Bulky.Models.AddressNew", b =>
+                {
+                    b.HasOne("Bulky.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bulky.Models.ShoppingCart", null)
+                        .WithMany("AddressNew")
+                        .HasForeignKey("ShoppingCartId");
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("Bulky.Models.OrderDetail", b =>
                 {
                     b.HasOne("Bulky.Models.OrderHeader", "OrderHeader")
@@ -771,11 +887,11 @@ namespace BulkyWeb.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Bulky.Models.Wallet", b =>
+            modelBuilder.Entity("Bulky.Models.WalletTotal", b =>
                 {
                     b.HasOne("Bulky.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("userId");
+                        .HasForeignKey("ApplicationUserId");
 
                     b.Navigation("ApplicationUser");
                 });
@@ -853,6 +969,11 @@ namespace BulkyWeb.Migrations
             modelBuilder.Entity("Bulky.Models.Product", b =>
                 {
                     b.Navigation("ProductImages");
+                });
+
+            modelBuilder.Entity("Bulky.Models.ShoppingCart", b =>
+                {
+                    b.Navigation("AddressNew");
                 });
 #pragma warning restore 612, 618
         }

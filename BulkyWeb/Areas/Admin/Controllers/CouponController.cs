@@ -46,7 +46,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("Name", "Coupon Code already exists.");
+                    ModelState.AddModelError("CouponCode", "Coupon Code already exists.");
                 }
 
 
@@ -76,10 +76,26 @@ namespace BulkyWeb.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Coupon.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Coupon updated successfully";
-                return RedirectToAction("Index");
+                Coupon? couponFromDb = _unitOfWork.Coupon.Get(u => u.CouponCode == obj.CouponCode);
+                if (couponFromDb == null)
+                {
+                    _unitOfWork.Coupon.Update(obj);
+                    _unitOfWork.Save();
+                    TempData["success"] = "Coupon updated successfully";
+                    return RedirectToAction("Index");
+                }
+
+
+                else
+                {
+                    ModelState.AddModelError("CouponCode", "Coupon code already exists.");
+                }
+
+
+
+
+
+                
             }
             return View();
         }

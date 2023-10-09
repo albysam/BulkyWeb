@@ -1,0 +1,44 @@
+﻿
+@model List<WalletTotal>
+
+
+    <div class="card shadow border-0 my-4">
+        <div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h2 class="text-white py-2">Wallet Balance</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        
+        <th>
+            Wallet Balance
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach(var obj in Model)
+        {
+            <tr>
+
+                <td>
+                    @obj.WalletBalance
+                </td>
+                
+               
+               
+            </tr>
+        }
+    </tbody>
+
+</table>
+</div>
+</div>

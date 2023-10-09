@@ -27,7 +27,12 @@ $(document).ready(function () {
                             loadDataTable("shipped");
                         }
                         else {
-                            loadDataTable("all");
+                            if (url.includes("refunded")) {
+                                loadDataTable("refunded");
+                            }
+                            else {
+                                loadDataTable("all");
+                            }
                         }
                     }
                 }
@@ -48,7 +53,8 @@ function loadDataTable(status) {
             { data: 'orderStatus', "width": "10%" },
             { data: 'paymentStatus', "width": "10%" },
             { data: 'paymentMethod', "width": "15%" },
-            { data: 'orderTotal', "width": "10%" },
+            { data: 'productTotal', "width": "10%" },
+          
             {
                 data: 'id',
                 "render": function (data) {
@@ -63,6 +69,6 @@ function loadDataTable(status) {
         ]
 
     });
- 
+    
 }
 

@@ -10,6 +10,9 @@ namespace Bulky.Models.ViewModels
 	{
 		public OrderHeader OrderHeader { get; set; }
 		public IEnumerable<OrderDetail> OrderDetail { get; set; }
-		public Wallet? Wallet { get; set; }
+		public WalletTotal? WalletTotal { get; set; }
+		public Coupon? Coupon { get; set; }
+	
+		public Address Address { get; set; }
 	}
 }

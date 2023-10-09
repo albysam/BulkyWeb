@@ -95,75 +95,6 @@ namespace BulkyWeb.Areas.Customer.Controllers
             return RedirectToAction("Summary");
         }
 
-        public IActionResult AddressView()
-        {
-            List<Bulky.Models.Address> objProductList = _unitOfWork.Address.GetAll().ToList();
-
-            return View(objProductList);
-        }
-
-
-        //[HttpPost]
-
-        //public IActionResult Address()
-        //{
-
-
-        //	var claimsIdentity = (ClaimsIdentity)User.Identity;
-        //	var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-        //              var AddressList = _unitOfWork.Address.GetAll(u => u.user_Id == userId);
-
-
-        //	IEnumerable<Address> addresses = _unitOfWork.Address.GetAll();
-
-        //	foreach (var address in ShoppingCartVM.AddressList)
-        //          {
-        //		address.user_Id= userId;
-        //              address.Status = 1;
-        //		_unitOfWork.Address.Add(Address);
-        //	}
-
-
-
-
-
-        //	var addressFromDb = _unitOfWork.Address.Get(u => u.user_Id == userId && u.Status == 1);
-        //	if (addressFromDb != null)
-        //	{
-        //		addressFromDb.Status = 0;
-        //		_unitOfWork.Address.Update(addressFromDb);
-
-        //	}
-
-        //          if (ShoppingCartVM.Address.StreetAddress == null || ShoppingCartVM.Address.State == null || ShoppingCartVM.Address.City == null || ShoppingCartVM.Address.PostalCode == null)
-        //          {
-        //              TempData["success"] = "All fields are required";
-        //              return RedirectToAction(nameof(Summary));
-        //          }
-
-
-
-
-
-        //          _unitOfWork.Save();
-
-        //	return RedirectToAction("Summary");
-        //}
-
-  //      public IActionResult AddressView()
-		//{
-		//	List<Bulky.Models.Address> objProductList = _unitOfWork.Address.GetAll().ToList();
-
-		//	return View(objProductList);
-		//}
-
-
-
-
-
-
-
 		public IActionResult Summary()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -179,15 +110,30 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
 
 
+		
 
-
-            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+			ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
 
 
             ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
             ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
 
-            ShoppingCartVM.Address = _unitOfWork.Address.Get(u => u.user_Id == userId && u.Status == 1);
+
+
+			//COUPON DISPLAY
+			ShoppingCartVM.Coupon = _unitOfWork.Coupon.GetAll();
+
+			foreach (var coupon in ShoppingCartVM.Coupon)
+			{
+				coupon.CouponCode = coupon.CouponCode;
+			}
+
+			
+
+
+
+
+			ShoppingCartVM.Address = _unitOfWork.Address.Get(u => u.user_Id == userId && u.Status == 1);
             if(ShoppingCartVM.Address != null)
             {
 				ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.Address.StreetAddress;
@@ -203,16 +149,135 @@ namespace BulkyWeb.Areas.Customer.Controllers
             ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.ApplicationUser.State;
             ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
 			}
+            
 
-			foreach (var cart in ShoppingCartVM.ShoppingCartList)
+
+            //WALLET START
+            ShoppingCartVM.WalletTotal = _unitOfWork.WalletTotal.Get(u => u.UserId == userId);
+
+            if (ShoppingCartVM.WalletTotal != null)
             {
-                cart.Price = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+                ShoppingCartVM.OrderHeader.CancelTotal = ShoppingCartVM.WalletTotal.WalletBalance;
+                //COUPON START
+
+                ShoppingCartVM.AppliedCoupon = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId);
+
+
+
+                if (ShoppingCartVM.AppliedCoupon != null)
+                {
+
+
+
+
+                    foreach (var cart in ShoppingCartVM.ShoppingCartList)
+                    {
+
+                        cart.Price = GetPriceBasedOnQuantity(cart);
+                        ShoppingCartVM.OrderHeader.ProductTotal += (cart.Price * cart.Count);
+                        var DiscountAmount = (ShoppingCartVM.OrderHeader.ProductTotal * ShoppingCartVM.AppliedCoupon.Discount) / 100;
+
+                        ShoppingCartVM.OrderHeader.Coupon = ShoppingCartVM.OrderHeader.ProductTotal - DiscountAmount;
+
+
+                        ShoppingCartVM.OrderHeader.OrderTotal = ShoppingCartVM.OrderHeader.Coupon - ShoppingCartVM.OrderHeader.CancelTotal;
+                        if (ShoppingCartVM.OrderHeader.OrderTotal <= 0)
+                        {
+                            ShoppingCartVM.OrderHeader.OrderTotal = 0;
+
+                        }
+
+
+
+
+
+                    }
+
+                }
+                //COUPON END
+                else {
+
+
+
+                    foreach (var cart in ShoppingCartVM.ShoppingCartList)
+                    {
+
+                        cart.Price = GetPriceBasedOnQuantity(cart);
+                        ShoppingCartVM.OrderHeader.ProductTotal += (cart.Price * cart.Count);
+
+
+                        ShoppingCartVM.OrderHeader.Coupon = 0;
+
+
+                        ShoppingCartVM.OrderHeader.OrderTotal = ShoppingCartVM.OrderHeader.ProductTotal - ShoppingCartVM.OrderHeader.CancelTotal;
+                        if (ShoppingCartVM.OrderHeader.OrderTotal <= 0)
+                        {
+                            ShoppingCartVM.OrderHeader.OrderTotal = 0;
+
+                        }
+                    }
+
+
+
+                }
+
+
+
             }
 
+            //WALLET END
+            else
+            {
 
 
-            return View(ShoppingCartVM);
+				//COUPON START
+
+				ShoppingCartVM.AppliedCoupon = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId);
+
+
+
+				if (ShoppingCartVM.AppliedCoupon != null)
+				{
+
+
+
+
+					foreach (var cart in ShoppingCartVM.ShoppingCartList)
+					{
+
+						cart.Price = GetPriceBasedOnQuantity(cart);
+						ShoppingCartVM.OrderHeader.ProductTotal += (cart.Price * cart.Count);
+						var DiscountAmount = (ShoppingCartVM.OrderHeader.ProductTotal * ShoppingCartVM.AppliedCoupon.Discount) / 100;
+
+						ShoppingCartVM.OrderHeader.Coupon = ShoppingCartVM.OrderHeader.ProductTotal - DiscountAmount;
+
+
+						ShoppingCartVM.OrderHeader.OrderTotal = ShoppingCartVM.OrderHeader.Coupon;
+						if (ShoppingCartVM.OrderHeader.OrderTotal <= 0)
+						{
+							ShoppingCartVM.OrderHeader.OrderTotal = 0;
+
+						}
+
+					}
+
+				}
+				//COUPON END
+				else
+				{
+
+					foreach (var cart in ShoppingCartVM.ShoppingCartList)
+                {
+                    ShoppingCartVM.OrderHeader.ProductTotal = 0;
+                    ShoppingCartVM.OrderHeader.CancelTotal = 0;
+                    cart.Price = GetPriceBasedOnQuantity(cart);
+                    ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+                }
+
+            }
+			}
+
+			return View(ShoppingCartVM);
         }
 
 
@@ -233,41 +298,195 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             ShoppingCartVM.OrderHeader.OrderDatec = System.DateTime.Now;
             ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
-            //ShoppingCartVM.OrderHeader.PaymentIntentId = "CashonDelivery";
-
-            //ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+           
 
             ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
-
-
-            foreach (var cart in ShoppingCartVM.ShoppingCartList)
+			///////////////////////////////////////WALLET START////////////////////////////////////////////////////////
+			ShoppingCartVM.WalletTotal = _unitOfWork.WalletTotal.Get(u => u.UserId == userId);
+            if (ShoppingCartVM.WalletTotal != null)
             {
-                cart.Price = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+                ShoppingCartVM.OrderHeader.CancelTotal = ShoppingCartVM.WalletTotal.WalletBalance;
+
+                //COUPON START
+
+                ShoppingCartVM.AppliedCoupon = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId);
+
+
+
+                if (ShoppingCartVM.AppliedCoupon != null)
+                {
+
+
+
+
+                    foreach (var cart in ShoppingCartVM.ShoppingCartList)
+                    {
+
+                        cart.Price = GetPriceBasedOnQuantity(cart);
+                        ShoppingCartVM.OrderHeader.ProductTotal += (cart.Price * cart.Count);
+                        var DiscountAmount = (ShoppingCartVM.OrderHeader.ProductTotal * ShoppingCartVM.AppliedCoupon.Discount) / 100;
+
+                        ShoppingCartVM.OrderHeader.Coupon = ShoppingCartVM.OrderHeader.ProductTotal - DiscountAmount;
+
+
+                        ShoppingCartVM.OrderHeader.OrderTotal = ShoppingCartVM.OrderHeader.Coupon - ShoppingCartVM.OrderHeader.CancelTotal;
+                        if (ShoppingCartVM.OrderHeader.OrderTotal <= 0)
+                        {
+                            ShoppingCartVM.OrderHeader.OrderTotal = 0;
+
+                        }
+
+
+
+
+
+                    }
+
+                }
+                //COUPON END
+                else
+                {
+
+                    foreach (var cart in ShoppingCartVM.ShoppingCartList)
+                    {
+                        cart.Price = GetPriceBasedOnQuantity(cart);
+                        ShoppingCartVM.OrderHeader.ProductTotal += (cart.Price * cart.Count);
+
+                        ShoppingCartVM.OrderHeader.OrderTotal = ShoppingCartVM.OrderHeader.ProductTotal - ShoppingCartVM.OrderHeader.CancelTotal;
+                        if (ShoppingCartVM.OrderHeader.OrderTotal <= 0)
+                        {
+                            ShoppingCartVM.OrderHeader.OrderTotal = 0;
+
+                        }
+                    }
+
+                }
+
+
             }
 
 
-			if (selectedOption == null)
+            ////////////////////////////////////WALLET END/////////////////////////////////////
+
+
+
+
+
+            else
+            {
+
+
+				//COUPON START
+
+				ShoppingCartVM.AppliedCoupon = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId);
+
+
+
+				if (ShoppingCartVM.AppliedCoupon != null)
+				{
+
+
+
+
+					foreach (var cart in ShoppingCartVM.ShoppingCartList)
+					{
+
+						cart.Price = GetPriceBasedOnQuantity(cart);
+						ShoppingCartVM.OrderHeader.ProductTotal += (cart.Price * cart.Count);
+						var DiscountAmount = (ShoppingCartVM.OrderHeader.ProductTotal * ShoppingCartVM.AppliedCoupon.Discount) / 100;
+
+						ShoppingCartVM.OrderHeader.Coupon = ShoppingCartVM.OrderHeader.ProductTotal - DiscountAmount;
+
+
+						ShoppingCartVM.OrderHeader.OrderTotal = ShoppingCartVM.OrderHeader.Coupon;
+						if (ShoppingCartVM.OrderHeader.OrderTotal <= 0)
+						{
+							ShoppingCartVM.OrderHeader.OrderTotal = 0;
+
+						}
+
+					}
+
+				}
+				//COUPON END
+				else
+				{
+					foreach (var cart in ShoppingCartVM.ShoppingCartList)
+					{
+						ShoppingCartVM.OrderHeader.ProductTotal = 0;
+						ShoppingCartVM.OrderHeader.CancelTotal = 0;
+						cart.Price = GetPriceBasedOnQuantity(cart);
+						ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+						ShoppingCartVM.OrderHeader.ProductTotal += (cart.Price * cart.Count);
+					}
+
+				}
+				
+			}
+            
+			if (selectedOption == null && ShoppingCartVM.OrderHeader.OrderTotal > 0)
 			{
 				TempData["success"] = "Select Payment Type";
 				return RedirectToAction(nameof(Summary));
 			}
 
-
+			//////////////////////////////////////////STRIPE START///////////////////////////////////////////////////////
 
 			if (SD.PaymentPayNow == selectedOption)
             {
                 ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
                 ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
-            }
-            else
-            {
+				
+				AppliedCoupon couponFromDb = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId || u.Status == 1);
+
+				if (couponFromDb != null)
+				{
+					_unitOfWork.AppliedCoupon.Remove(couponFromDb);
+				}
+
+			}
+			//////////////////////////////////////////STRIPE END///////////////////////////////////////////////////////
+			//////////////////////////////////////////COD START///////////////////////////////////////////////////////
+
+			else if (SD.PaymenCashonDelivery == selectedOption)
+			{
 
                 ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPayment;
                 ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;
-            }
+				var walletFromDb = _unitOfWork.WalletTotal.Get(u => u.UserId == ShoppingCartVM.OrderHeader.ApplicationUserId);
+				if (walletFromDb != null) {
+					walletFromDb.WalletBalance = 0;
+				_unitOfWork.WalletTotal.Update(walletFromDb);
+				}
 
-			
+				AppliedCoupon couponFromDb = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId || u.Status == 1);
+
+				if (couponFromDb != null)
+				{
+					_unitOfWork.AppliedCoupon.Remove(couponFromDb);
+				}
+
+				
+					
+
+
+				}
+			//////////////////////////////////////////COD START///////////////////////////////////////////////////////
+			else
+			{
+				ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusCompleted;
+				ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;
+				var walletFromDb = _unitOfWork.WalletTotal.Get(u => u.UserId == ShoppingCartVM.OrderHeader.ApplicationUserId);
+				
+					walletFromDb.WalletBalance = walletFromDb.WalletBalance - ShoppingCartVM.OrderHeader.ProductTotal;
+					_unitOfWork.WalletTotal.Update(walletFromDb);
+				AppliedCoupon couponFromDb = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId);
+
+				if (couponFromDb != null)
+				{
+					_unitOfWork.AppliedCoupon.Remove(couponFromDb);
+				}
+			}
 
 			_unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();
@@ -294,6 +513,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 _unitOfWork.OrderDetail.Add(orderDetail);
                 _unitOfWork.Save();
             }
+
+            //////////////////////////////////////////////STRIPE PAYMENT START///////////////////////////////////////////////////////////////////
             if (SD.PaymentPayNow == selectedOption)
 
             {
@@ -310,30 +531,34 @@ namespace BulkyWeb.Areas.Customer.Controllers
                     LineItems = new List<SessionLineItemOptions>(),
 
                     Mode = "payment",
+                    AllowPromotionCodes = true,
                 };
+			
+				
+					foreach (var item in ShoppingCartVM.ShoppingCartList)
+					{
+
+						var sessionLineItem = new SessionLineItemOptions
+						{
+							PriceData = new SessionLineItemPriceDataOptions
+							{
+								UnitAmount = (long)(item.Price * 100),
+								Currency = "usd",
+								ProductData = new SessionLineItemPriceDataProductDataOptions
+								{
+									Name = item.Product.Title
+								}
+							},
+							Quantity = item.Count
+						};
+						options.LineItems.Add(sessionLineItem);
+					}
 
 
-                foreach (var item in ShoppingCartVM.ShoppingCartList)
-                {
-
-                    var sessionLineItem = new SessionLineItemOptions
-                    {
-                        PriceData = new SessionLineItemPriceDataOptions
-                        {
-                            UnitAmount = (long)(item.Price * 100),
-                            Currency = "usd",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = item.Product.Title
-                            }
-                        },
-                        Quantity = item.Count
-                    };
-                    options.LineItems.Add(sessionLineItem);
-                }
 
 
-                var service = new SessionService();
+
+				var service = new SessionService();
                 Session session = service.Create(options);
 
                 _unitOfWork.OrderHeader.UpdateStripePaymentID(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
@@ -347,12 +572,88 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         }
 
+		//////////////////////////////////////////////STRIPE PAYMENT END///////////////////////////////////////////////////////////////////
+
+		//COUPON
+
+		[HttpPost]
+
+        public IActionResult ApplyCoupon(AppliedCoupon couponUsed, int couponId, int couponDiscount, string couponMinAmount, string couponMaxAmount)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            couponUsed.UserId = userId;
+			AppliedCoupon couponFromDb = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId);
+
+            if (couponFromDb != null)
+            {
+				TempData["success"] = "Remove already applied coupon then apply another coupon";
+				return RedirectToAction(nameof(Summary));
+			}
+
+            else
+            {
+
+				AppliedCoupon cart = new AppliedCoupon()
+                {
 
 
+                    CouponId = couponId,
+                    UserId = userId,
+                    Status = 1,
+                    Discount = couponDiscount,
+                    MinCartAmount = couponMinAmount,
+                    MaxCartAmount = couponMaxAmount
+
+				};
+
+
+                _unitOfWork.AppliedCoupon.Add(cart);
+            }
+
+
+
+
+            TempData["success"] = "Coupon Applied Successfully";
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Summary));
+        }
+
+        [HttpPost]
+        public IActionResult RemoveCoupon(AppliedCoupon couponUsed, int couponId)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            couponUsed.UserId = userId;
+			AppliedCoupon couponFromDb = _unitOfWork.AppliedCoupon.Get(u => u.UserId == userId &&
+             u.CouponId == couponId);
+
+            if (couponFromDb == null)
+            {
+                TempData["success"] = "Remove already applied coupon";
+                return RedirectToAction(nameof(Summary));
+            }
+
+            else
+            {
+
+
+
+                _unitOfWork.AppliedCoupon.Remove(couponFromDb);
+
+                TempData["success"] = "Coupon Removed Successfully";
+            }
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Summary));
+
+        }
         public IActionResult OrderConfirmation(int id)
         {
             OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id, includeProperties: "ApplicationUser");
-            if (orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
+            if (orderHeader.PaymentStatus == SD.PaymentStatusPending)
             {
                 var service = new SessionService();
                 Session session = service.Get(orderHeader.SessionId);
@@ -363,6 +664,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
                     _unitOfWork.Save();
                 }
             }
+
+
             List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart
                 .GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
 
@@ -370,9 +673,9 @@ namespace BulkyWeb.Areas.Customer.Controllers
             _unitOfWork.Save();
             return View(id);
         }
+		
 
-
-        public IActionResult Plus(int cartId)
+		public IActionResult Plus(int cartId)
         {
             var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
             cartFromDb.Count += 1;
@@ -443,96 +746,6 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//				[HttpPost]
-//public IActionResult ApplyCoupon(ShoppingCartVM model)
-//{
-//    // Assuming you have a method to retrieve the discount percentage for the selected coupon code.
-//    double discountPercentage = GetDiscountPercentage(model.SelectedCouponCode);
-
-//    // Assuming you have a method to calculate the total amount of the products in the cart.
-//    double totalAmount = CalculateTotalAmount(ShoppingCartVM.ShoppingCartList);
-
-//    if (discountPercentage > 0)
-//    {
-//        double discountedAmount = totalAmount - (totalAmount * (discountPercentage / 100));
-//        ShoppingCartVM.OrderHeader.OrderTotal = discountedAmount;
-//    }
-//    else
-//    {
-//        ShoppingCartVM.OrderHeader.OrderTotal = totalAmount; // No discount applied
-//    }
-
-//    return PartialView("_ValidationScriptsPartial", model);
-//}
-
-
-
-//private double GetDiscountPercentage(string couponCode)
-//{
-
-//    if (couponCode == "SUMMER2023")
-//    {
-//        return 5; // 20% discount
-//    }
-//    else
-//    {
-//        return 0; // Coupon not found or error
-//    }
-//}
-
-
-//private double CalculateTotalAmount(IEnumerable<ShoppingCart> shoppingCartList)
-//{
-
-
-//    var claimsIdentity = (ClaimsIdentity)User.Identity;
-//    var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-//    ShoppingCartVM = new()
-//    {
-//        ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
-//       includeProperties: "Product"),
-//        OrderHeader = new()
-//    };
-
-//    IEnumerable<ProductImage> productImages = _unitOfWork.ProductImage.GetAll();
-//    double totalAmount = 0;
-
-//    foreach (var cart in ShoppingCartVM.ShoppingCartList)
-//    {
-//        cart.Product.ProductImages = productImages.Where(u => u.ProductId == cart.Product.Id).ToList();
-//        cart.Price = GetPriceBasedOnQuantity(cart);
-
-//        ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
-
-//        totalAmount = ShoppingCartVM.OrderHeader.OrderTotal;
-//    }
-
-//    return totalAmount;
-//}
 
 
 

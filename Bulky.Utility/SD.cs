@@ -15,7 +15,8 @@ namespace Bulky.Utility
 
 		public const string PaymenCashonDelivery = "Cash on Delivery";
 		public const string PaymentPayNow = "Pay Now";
-		
+		public const string PaymentWallet = "Wallet Payment";
+
 		public const string StatusPending = "Pending";
         public const string StatusApproved = "Approved";
         public const string StatusInProcess = "Processing";
@@ -24,7 +25,7 @@ namespace Bulky.Utility
         public const string StatusRefunded = "Refunded";
 
 
-
+        public const string PaymentStatusRefunded = "Refunded";
         public const string PaymentStatusPending = "Pending";
 		public const string PaymentStatusApproved = "Approved";
 		public const string PaymentStatusCompleted = "Completed";

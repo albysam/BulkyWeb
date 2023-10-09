@@ -29,5 +29,12 @@ namespace Bulky.Models
         public double Price { get; set; }
         [NotMapped]
         public Wishlist Wishlist { get; set; }
-    }
+		[NotMapped]
+		public Wallet Wallet { get; set; }
+		[NotMapped]
+		public Coupon Coupon { get; set; }
+		
+		public ICollection<AddressNew> AddressNew { get; set; }
+
+	}
 }

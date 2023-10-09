@@ -240,18 +240,39 @@
                                 <li class="list-group-item bg-primary">
                                     <div class="row container">
                                         <div class="col-6">
-                                            <h5 class="text-white">TOTAL </h5>
+                                            <h5 class="text-white">Total Amount</h5>
                                         </div>
                                         <div class="col-6 text-end">
-                                            <h5 class="text-white">@Model.OrderHeader.OrderTotal.ToString("c")</h5>
+                                            <h5 class="text-white">@Model.OrderHeader.ProductTotal.ToString("c")</h5>
                                         </div>
                                     </div>
+                                   
+                                </li>
+
+                                <li class="list-group-item bg-primary">
+
+                                <div class="row container">
+                                    <div class="col-6">
+                                        <h5 class="text-white">Paid Amount</h5>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                            @if (@Model.OrderHeader.OrderTotal != 0)
+                                            {
+                                                <h5 class="text-white">@Model.OrderHeader.OrderTotal.ToString("c")</h5>
+                                            }
+                                            else
+                                            {
+                                                <h5 class="text-white">@Model.OrderHeader.ProductTotal.ToString("c")</h5>
+                                            }
+                                           
+                                    </div>
+                                </div>
                                 </li>
                             </ul>
                             @if (User.IsInRole(SD.Role_Admin))
                             {
                                 @if (Model.OrderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment &&
-                               Model.OrderHeader.OrderStatus == SD.StatusShipped && Model.OrderHeader.PaymentMethod == SD.PaymenCashonDelivery)
+                               Model.OrderHeader.OrderStatus == SD.StatusShipped && Model.OrderHeader.PaymentMethod == SD.PaymenCashonDelivery && Model.OrderHeader.OrderStatus != SD.StatusCancelled)
                                 {
                                     <button type="submit" class="btn btn-success form-control my-1">Payment Recived </button>
                                 }
@@ -267,8 +288,8 @@
                                     <button type="submit" asp-action="ShipOrder" onclick="return validateInput()" class="btn btn-primary form-control my-1">Ship Order</button>
                                 }
                             }
-                                @if ((Model.OrderHeader.OrderStatus != SD.StatusRefunded) &&
-                               (Model.OrderHeader.OrderStatus != SD.StatusCancelled))
+                            @if (Model.OrderHeader.OrderStatus != SD.StatusCancelled && Model.OrderHeader.PaymentStatus != SD.PaymentStatusRefunded)
+                            
 
 
                                 { 

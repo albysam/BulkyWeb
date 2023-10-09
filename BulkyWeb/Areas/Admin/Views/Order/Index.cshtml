@@ -6,6 +6,7 @@
     var completed = "text-primary";
     var approved = "text-primary";
     var cancelled = "text-primary";
+    var refunded = "text-primary";
     var all = "text-primary";
 
     switch (status)
@@ -18,6 +19,9 @@
             break;
         case "completed":
             completed = "action text-white bg-primary";
+            break;
+        case "refunded":
+            refunded = "action text-white bg-primary";
             break;
         case "approved":
             approved = "action text-white bg-primary";
@@ -51,6 +55,9 @@
                 </a>
                 <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="completed">
                 <li class="list-group-item @completed">Completed</li>
+                </a>
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="refunded">
+                <li class="list-group-item @refunded">Refunded</li>
                 </a>
                 <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="approved">
                 <li class="list-group-item @approved">Approved</li>
@@ -93,8 +100,8 @@
                         Payment Status
                     </th>
                     <th>Payment Type</th>
-                <th>Total</th>
-               
+                <th>Total Amount</th>
+                   
                     <th></th>
             </tr>
         </thead>

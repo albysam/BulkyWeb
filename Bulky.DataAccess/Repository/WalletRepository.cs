@@ -17,11 +17,8 @@ namespace Bulky.DataAccess.Repository
         {
             _db= db;
         }
-		public void Add(Wallet wallet)
-		{
-			throw new NotImplementedException();
-		}
-		public Wallet? FirstOrDefault(Func<object, bool> value)
+
+        public Wallet? FirstOrDefault(Func<object, bool> value)
         {
             throw new NotImplementedException();
         }

@@ -41,6 +41,47 @@ namespace BulkyWeb.Area.Customer.Controllers
             return View(cart);
         }
 
+        [HttpPost]
+        [Authorize]
+        public IActionResult HomeCart(ShoppingCart shoppingCart, int productId)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            shoppingCart.ApplicationUserId = userId;
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId &&
+          u.ProductId == productId);
+
+            if (cartFromDb != null)
+            {
+                cartFromDb.Count += 1;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+
+            else
+            {
+
+                ShoppingCart cart = new ShoppingCart () 
+                {
+                   
+                   
+                    ProductId = productId,
+                    Count = 1,
+                    ApplicationUserId = userId
+                };
+
+
+                _unitOfWork.ShoppingCart.Add(cart);
+            }
+
+
+
+            
+                TempData["success"] = "Cart updated Successfully";
+                _unitOfWork.Save();
+          
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpPost]
         [Authorize]

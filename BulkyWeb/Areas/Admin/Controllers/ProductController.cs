@@ -112,7 +112,10 @@ namespace BulkyWeb.Areas.Admin.Controllers
                         }
                         _unitOfWork.Product.Update(productVM.Product);
                         _unitOfWork.Save();
-                    }
+                    TempData["success"] = "Image created/updated successfully";
+                   
+                     //return RedirectToAction(nameof(Upsert), new { id = productVM.Product.Id });
+                }
                    
 
                     TempData["success"] = "Product created/updated successfully";
@@ -152,10 +155,11 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 _unitOfWork.ProductImage.Remove(imageToBeDeleted);
                 _unitOfWork.Save();
 
-                TempData["sccess"] = "Deleted successfully";
+                TempData["success"] = "Deleted successfully";
             }
 
             return RedirectToAction(nameof(Upsert), new {id = productId });
+           
         }
 
 
