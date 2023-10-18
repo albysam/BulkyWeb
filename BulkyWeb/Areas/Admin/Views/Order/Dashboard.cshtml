@@ -1,0 +1,156 @@
+﻿@model OrderVM
+<div class="container">
+    <h1>Admin Dashboard</h1>
+    <div class="row pt-2">
+        <div class="col-6 col-md-3">
+            <a type="button" class="btn btn-primary from-control" asp-area="Admin" asp-controller="Order" asp-action="Report">Sales Report</a>
+        </div>
+      
+    </div>
+    <!-- Add Chart Containers -->
+    <div class="row">
+        <div class="col-md-4">
+        
+            <canvas id="trendingChart" width="400" height="400"></canvas>
+            <h2>Trending Products</h2>
+          
+
+        </div>
+       <div class="col-md-4">
+         
+            <canvas id="revenueChart" width="400" height="400"></canvas>
+            <h2>Total Revenue</h2>
+        </div>
+
+        <div class="col-md-4">
+
+            <canvas id="ordersChart" width="400" height="400"></canvas>
+            <h2>Total Orders</h2>
+        </div>
+       
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@* <script src="~/js/dashboard.js"></script> *@
+
+<script>
+    var ctx = document.getElementById('trendingChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [@foreach (var product in Model.TrendingProductsData)
+    {
+        @Html.Raw("'" + product.Product.Title + "',")
+    }],
+            datasets: [{
+                label: 'Trending Products',
+                data: [@foreach (var product in Model.TrendingProductsData)
+    {
+        @Html.Raw(product.Count + ",")
+    }],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+
+
+    var ctx = document.getElementById('revenueChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [@foreach (var entry in Model.TotalRevenueData)
+    {
+        @Html.Raw("'" + entry.OrderDatec.Date+ "',")
+    }],
+            datasets: [{
+                label: 'Total Revenue',
+                data: [@foreach (var entry in Model.TotalRevenueData)
+    {
+        @Html.Raw(entry.Price + ",")
+    }],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+
+
+    var ctx = document.getElementById('ordersChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [@foreach (var entry in Model.TotalOrdersData)
+    {
+        @Html.Raw("'" + entry.OrderStatusType + "',")
+    }],
+            datasets: [{
+                label: 'Total Orders',
+                data: [@foreach (var entry in Model.TotalOrdersData)
+    {
+        @Html.Raw(entry.OrderStatus + ",")
+    }],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+</script>
+    
+
+
+
+
+
+
+
+

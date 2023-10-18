@@ -1,5 +1,9 @@
 ﻿@model OrderVM
+<form method="get">
 
+    <input asp-for="OrderHeader.Id" hidden />
+    <a class="btn btn-outline-info btn-sm" style="background-color:#21252912" href="@Url.Action("GeneratePdf", "Order", new { orderId = @Model.OrderHeader.Id })">Generate Invoice</a>
+</form>
 <form method="post">
     <input asp-for="OrderHeader.Id" hidden />
     <br />
@@ -246,28 +250,29 @@
                                             <h5 class="text-white">@Model.OrderHeader.ProductTotal.ToString("c")</h5>
                                         </div>
                                     </div>
-                                   
+                                    <hr style="color:whitesmoke" />
+                                    <div class="row container">
+                                        <div class="col-6">
+                                            <h5 class="text-white">Discount</h5>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <h5 class="text-white">@Model.OrderHeader.CouponDiscount.ToString("c")</h5>
+                                        </div>
+                                    </div>
+                                    <hr style="color:whitesmoke" />
+                                    <div class="row container">
+                                        <div class="col-6">
+                                            <h5 class="text-white">Paid Amount</h5>
+                                        </div>
+                                        <div class="col-6 text-end">
+
+                                            <h5 class="text-white">@Model.OrderHeader.TotalPaidAmount.ToString("c")</h5>
+
+
+                                        </div>
+                                    </div>
                                 </li>
 
-                                <li class="list-group-item bg-primary">
-
-                                <div class="row container">
-                                    <div class="col-6">
-                                        <h5 class="text-white">Paid Amount</h5>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                            @if (@Model.OrderHeader.OrderTotal != 0)
-                                            {
-                                                <h5 class="text-white">@Model.OrderHeader.OrderTotal.ToString("c")</h5>
-                                            }
-                                            else
-                                            {
-                                                <h5 class="text-white">@Model.OrderHeader.ProductTotal.ToString("c")</h5>
-                                            }
-                                           
-                                    </div>
-                                </div>
-                                </li>
                             </ul>
                             @if (User.IsInRole(SD.Role_Admin))
                             {
@@ -276,7 +281,7 @@
                                 {
                                     <button type="submit" class="btn btn-success form-control my-1">Payment Recived </button>
                                 }
-                                @if (Model.OrderHeader.OrderStatus == SD.StatusApproved)
+                                @if (Model.OrderHeader.OrderStatus == SD.StatusPending)
                                 {
                                     <button type="submit" asp-action="StartProcessing"
                                             class="btn btn-primary form-control my-1">

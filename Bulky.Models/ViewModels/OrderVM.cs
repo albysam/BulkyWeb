@@ -14,5 +14,8 @@ namespace Bulky.Models.ViewModels
 		public Coupon? Coupon { get; set; }
 	
 		public Address Address { get; set; }
-	}
+        public List<OrderDetail> TrendingProductsData { get; set; }
+        public List<OrderDetail> TotalRevenueData { get; set; }
+        public List<OrderDetail> TotalOrdersData { get; set; }
+    }
 }

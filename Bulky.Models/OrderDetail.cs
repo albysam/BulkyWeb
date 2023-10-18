@@ -28,5 +28,8 @@ namespace Bulky.Models
 
         public int Count { get; set; }
         public double Price { get; set; }
+        public DateTime OrderDatec { get; set; }
+        public int OrderStatus { get; set; }
+        public string OrderStatusType { get; set; }
     }
 }

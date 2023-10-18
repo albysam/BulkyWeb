@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var context = HttpContextAccessor.HttpContext;
+    // Now you can use the 'context' variable to access the HttpContext.
+}
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -11,34 +20,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     @*  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/3.0.2/croppie.min.css"> *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-  
+
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    
+
 
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BulkyWeb</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/book.png" style="width:30px"/>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-
+                        @if (!User.IsInRole(SD.Role_Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                        }
+                        @if (User.IsInRole(SD.Role_Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Dashboard">Dashboard</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Index">Manage Order</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Admin" asp-controller="WalletTotal" asp-action="Index">Wallet</a>
-                        </li>
+                        @if (!User.IsInRole(SD.Role_Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="WalletTotal" asp-action="Index">Wallet</a>
+                            </li>
+                        }
                         @if (User.IsInRole(SD.Role_Admin))
                         {
+
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Content Management
@@ -60,24 +84,38 @@
                                     <li class="nav-item">
                                         <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">Manage User</a>
                                     </li>
+
+
                                 </ul>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                        @if (!User.IsInRole(SD.Role_Admin))
+                        {
+                           
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">
 
-                                <i class="bi bi-cart"></i>
-                            </a>
-                        </li>
+                                      @await Component.InvokeAsync("ShoppingCart")
+                                    </a>
+                                </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Customer" asp-controller="Wishlist" asp-action="Index">
 
-                                <i class="bi bi-heart"></i>
-                            </a>
-                        </li>
+                          
 
-                       
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Customer" asp-controller="Wishlist" asp-action="Index">
+
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                            </li>
+
+
+
+
+
+
+                        }
+
                     </ul>
 
                     <partial name="_LoginPartial" />
@@ -106,14 +144,14 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" asp-append-version="true"></script>
 
-   @*  <script src="https://cdn.tiny.cloud/1/qgv0aggr2q17y26fixlnwry1xv7l6ps3uvd61rf1oxqlf3vj/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> *@
-   @*  <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/3.0.2/croppie.min.js"></script> *@
-   
+    @*  <script src="https://cdn.tiny.cloud/1/qgv0aggr2q17y26fixlnwry1xv7l6ps3uvd61rf1oxqlf3vj/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> *@
+    @*  <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/3.0.2/croppie.min.js"></script> *@
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 
-   
+
 
 </body>
 </html>

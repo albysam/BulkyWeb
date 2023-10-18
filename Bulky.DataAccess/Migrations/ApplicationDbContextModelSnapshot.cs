@@ -211,8 +211,18 @@ namespace BulkyWeb.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("OrderDatec")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("OrderHeaderId")
                         .HasColumnType("int");
+
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrderStatusType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
@@ -252,6 +262,9 @@ namespace BulkyWeb.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Coupon")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CouponDiscount")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
@@ -307,8 +320,14 @@ namespace BulkyWeb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("TotalPaidAmount")
+                        .HasColumnType("float");
+
                     b.Property<string>("TrackingNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("WalletUsedAmount")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

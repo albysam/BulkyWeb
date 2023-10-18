@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Bulky.Models.ViewModels;
 
 namespace Bulky.Models
 {
@@ -60,6 +61,16 @@ namespace Bulky.Models
 
         [ValidateNever]
         public List<ProductImage> ProductImages { get; set;}
-       
+
+        //public static implicit operator Product(ProductVM v)
+        //{
+        //    return new Product
+        //    {
+        //         Assuming properties in ProductVM map to properties in Product
+        //        Id = v.ProductId,
+        //        Title = v.Title,
+        //         Other properties...
+        //    };
+        //}
     }
 }

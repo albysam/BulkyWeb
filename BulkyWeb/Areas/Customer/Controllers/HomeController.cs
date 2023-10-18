@@ -2,10 +2,14 @@ using Bulky.DataAccess.Repository;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
+using Bulky.Utility;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace BulkyWeb.Area.Customer.Controllers
 {
@@ -15,6 +19,7 @@ namespace BulkyWeb.Area.Customer.Controllers
     //public new
     public class HomeController : Controller
     {
+
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
@@ -25,7 +30,9 @@ namespace BulkyWeb.Area.Customer.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImages");
+          
+
+            IEnumerable <Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImages");
             return View(productList);
         }
 
@@ -55,7 +62,33 @@ namespace BulkyWeb.Area.Customer.Controllers
             if (cartFromDb != null)
             {
                 cartFromDb.Count += 1;
-                _unitOfWork.ShoppingCart.Update(cartFromDb);
+
+
+                //STOCK MANAGEMENT
+                var productFromDb1 = _unitOfWork.Product.Get(u => u.Id == shoppingCart.ProductId);
+
+                if (cartFromDb.Count > productFromDb1.Price)
+                {
+                    TempData["success"] = "Product already added to cart";
+
+
+                }
+
+                else
+                {
+                    _unitOfWork.ShoppingCart.Update(cartFromDb);
+                    TempData["success"] = "Cart updated Successfully";
+                    _unitOfWork.Save();
+
+
+                }
+
+
+
+
+
+
+              
             }
 
             else
@@ -70,16 +103,17 @@ namespace BulkyWeb.Area.Customer.Controllers
                     ApplicationUserId = userId
                 };
 
-
                 _unitOfWork.ShoppingCart.Add(cart);
+                TempData["success"] = "Cart updated Successfully";
+                _unitOfWork.Save();
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
+               
             }
 
 
 
-            
-                TempData["success"] = "Cart updated Successfully";
-                _unitOfWork.Save();
-          
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -98,31 +132,44 @@ namespace BulkyWeb.Area.Customer.Controllers
             if (cartFromDb != null)
             {
                 cartFromDb.Count += shoppingCart.Count;
-                _unitOfWork.ShoppingCart.Update(cartFromDb);
+
+
+                //STOCK MANAGEMENT
+                var productFromDb = _unitOfWork.Product.Get(u => u.Id == shoppingCart.ProductId);
+
+                if (cartFromDb.Count > productFromDb.Price)
+                {
+                    TempData["success"] = "Product already added to cart";
+
+
+                }
+
+                else
+                {
+                    _unitOfWork.ShoppingCart.Update(cartFromDb);
+                    TempData["success"] = "Cart updated Successfully";
+                    _unitOfWork.Save();
+                  
+
+                }
+
+
+              
             }
 
             else
             {
 
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
-            }
-
-
-            //STOCK MANAGEMENT
-            var productFromDb = _unitOfWork.Product.Get(u => u.Id == shoppingCart.ProductId);
-
-            if (shoppingCart.Count > productFromDb.Price)
-            {
-                TempData["success"] = "Not enough stock available";
-
-
-            }
-
-            else
-            {
                 TempData["success"] = "Cart updated Successfully";
                 _unitOfWork.Save();
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
+
             }
+
+           
+
             return RedirectToAction(nameof(Index));
         }
 

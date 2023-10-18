@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Bulky.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -38,6 +39,9 @@ namespace Bulky.Models
 		public double CancelTotal { get; set; }
 		public double ProductTotal { get; set; }
 		public double Coupon { get; set; }
+		public double CouponDiscount { get; set; }
+		public double WalletUsedAmount { get; set; }
+		public double TotalPaidAmount { get; set; }
 
 		[Required]
         public string? PhoneNumber { get; set; }
@@ -51,6 +55,6 @@ namespace Bulky.Models
         public string? PostalCode { get; set; }
         [Required]
         public string? Name { get; set; }
-
+       
     }
 }

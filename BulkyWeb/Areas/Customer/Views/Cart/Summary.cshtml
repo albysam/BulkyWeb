@@ -118,18 +118,8 @@
 									<span class="text-muted">@((details.Price*details.Count).ToString("c")) </span>
 								</li>
 								}
-@* 
-								<li class="list-group-item d-flex justify-content-between">
-										<input type="text" id="SelectedCouponCode" asp-for="SelectedCouponCode" />
-									
-									
-								
-									<a asp-action="applyCoupon" id="applyCoupon" asp-route-cartId="@details.Id" class="btn btn-outline-primary bg-gradient py-2">
-										
-									Apply Coupon</a> 
-									
-								</li> *@
-								@if(@Model.OrderHeader.CancelTotal != 0){
+
+								@* @if(@Model.OrderHeader.CancelTotal != 0){ *@
 								<li class="list-group-item d-flex justify-content-between bg-light">
 									<small class="text-info">Cart Total (USD)</small>
 
@@ -137,19 +127,11 @@
 								</li>
 									
 									
-								<li class="list-group-item d-flex justify-content-between bg-light">
-									<small class="text-info">Wallet Total (USD)</small>
+							
+								@* } *@
+								@* @if(Model.OrderHeader.OrderTotal !=0){ *@
 
-									<strong id="walletTotal" class="text-info">@Model.OrderHeader.CancelTotal</strong>
-								</li>
-								}
-								@if(Model.OrderHeader.OrderTotal !=0){
-
-								<li class="list-group-item d-flex justify-content-between bg-light">
-									<small class="text-info">Cart Total After Coupon Discount(USD)</small>
-
-									<strong id="discountAmount" class="text-info">@Model.OrderHeader.Coupon</strong>
-								</li>
+								
 
 								@foreach (var coupon in Model.Coupon)
 								{
@@ -163,18 +145,24 @@
 
 									</li>
 								}
-								}
+							@* 	} *@
+
+								<li class="list-group-item d-flex justify-content-between bg-light">
+									<small class="text-info">Cart Total After Coupon Discount(USD)</small>
+
+									<strong id="discountAmount" class="text-info">@Model.OrderHeader.Coupon</strong>
+								</li>
+
+								<li class="list-group-item d-flex justify-content-between bg-light">
+									<small class="text-info">Wallet Total (USD)</small>
+
+									<strong id="walletTotal" class="text-info">@Model.OrderHeader.CancelTotal</strong>
+								</li>
 								<li class="list-group-item d-flex justify-content-between bg-light">
 									<small class="text-info">Total Amount to Pay (USD)</small>
 								
 									<strong id="totalAmount" class="text-info">@Model.OrderHeader.OrderTotal</strong>
 								</li>
-
-
-
-								
-								
-								
 
 
 
@@ -336,26 +324,6 @@
 	</div>
 </div>
 
-<!-- Second Modal -->
-@* <div id="myModals" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalsLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			
-			<div class="modal-body">
-				<!-- Select address form or content here -->
-
-				<partial name="Address/ViewAddress" />
-
-				<!------------------------------------------>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary close-modal-btn">Close</button>
-			</div>
-		</div>
-	</div>
-</div> *@
-
-
 @section Scripts{
 
     <partial name="_ValidationScriptsPartial" />
@@ -379,23 +347,7 @@
 
 
 
-	<script>
-		$(document).ready(function () {
-			$('#openModalButtons').click(function () {
-				$('#myModals').modal('show');
-
-			});
-
-		});
-	</script>
-	<script>
-		$(document).ready(function () {
-			// Add a click event handler to the close button inside the modal
-			$('#myModals').on('click', '.close-modal-btn', function () {
-				$('#myModals').modal('hide'); // Hide the modal
-			});
-		});
-	</script>
+	
 
 
 
