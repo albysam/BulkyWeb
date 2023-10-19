@@ -10,8 +10,6 @@ using Bulky.DataAccess.DbInitializer;
 using Stripe;
 using BulkyWeb.Areas.Identity.Pages.Account;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -66,21 +64,14 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
-
+//SeedDatabase();
 app.MapRazorPages();
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-      name: "default",
-      pattern: "{area:Customer}/{controller=Home}/{action=Index}/{id?}"
-    );
-});
 
 
 
