@@ -1,11 +1,16 @@
 ﻿using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Bulky.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize (Roles = SD.Role_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -28,10 +33,24 @@ namespace BulkyWeb.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Add(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Category created successfully";
-                return RedirectToAction("Index");
+
+
+               // var existingUser = _unitOfWork.Category.FirstOrDefault(u => u.Name == obj.Name);
+                Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Name == obj.Name);
+                if (categoryFromDb == null)
+                {
+                    _unitOfWork.Category.Add(obj);
+                    _unitOfWork.Save();
+                    TempData["success"] = "Category created successfully";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError("Name", "Category Name already exists.");
+                }
+
+
+               
             }
             return View();
         }
@@ -57,10 +76,22 @@ namespace BulkyWeb.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Category updated successfully";
-                return RedirectToAction("Index");
+				Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Name == obj.Name);
+
+				if (categoryFromDb == null)
+				{
+					_unitOfWork.Category.Update(obj);
+					_unitOfWork.Save();
+					TempData["success"] = "Category updated successfully";
+					return RedirectToAction("Index");
+				}
+				else
+				{
+					ModelState.AddModelError("Name", "Category Name already exists.");
+				}
+
+
+				
             }
             return View();
         }

@@ -1,0 +1,98 @@
+﻿@model OrderVM
+
+
+    <div class="card shadow border-0 my-4">
+        <div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                <h2 class="text-white py-2">Sales Report</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+           <form method="get">
+    <div class="form-group" style="display: inline-block; margin-right: 80px;">
+                <label for="DateFrom">From Date:</label>
+                <input type="date" id="DateFrom" name="DateFrom" class="form-control" style="width: 200px;" />
+    </div>
+    <div class="form-group" style="display: inline-block; margin-right: 80px;">
+                <label for="DateTo">To Date:</label>
+                <input type="date" id="DateTo" name="DateTo" class="form-control" style="width: 150px;" />
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+           
+            <a asp-controller="Order" asp-action="ReportExport" class="btn btn-success">
+                Export
+            </a>
+          
+</form>
+
+        <div class="col-6 text-end">  </div>
+           
+
+
+
+
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>
+            PRODUCT ID
+        </th>
+        <th>
+            PRODUCT TITLE
+        </th>
+                    <th>
+                       PRODUCT TOTAL COUNT
+                    </th>
+                    <th>
+                       PRODUCT TOTAL AMOUNT
+                    </th>
+    </tr>
+           
+  
+   
+    </thead>
+    <tbody>
+                @{
+                    int totalCount = Model.OrderDetail.Sum(detail => detail.Count);
+                    double totalAmount = Model.OrderDetail.Sum(detail => detail.Price);
+                }
+        @foreach (var detail in Model.OrderDetail)
+                                {
+            <tr>
+                <td>
+                            @detail.ProductId
+                </td>
+                <td>
+                            @detail.Product.Title
+                </td>
+                <td>
+                            @detail.Count
+                </td>
+                        <td>
+                            @detail.Price
+                        </td>
+            </tr>
+           
+       }
+
+                <tr>
+                    <td>
+                        <b>TOTAL COUNT: @totalCount</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>TOTAL AMOUNT: @totalAmount</b>
+                    </td>
+                </tr>
+    </tbody>
+
+</table>
+</div>
+</div>
+

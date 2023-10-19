@@ -5,6 +5,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Bulky.Models.ViewModels;
 
 namespace Bulky.Models
 {
@@ -15,31 +18,59 @@ namespace Bulky.Models
 
         [DisplayName("Category Name")]
         [Required]
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
         [Required]
-        public string ISBN { get; set; }
+        public string? ISBN { get; set; }
         [Required]
-        public string Author { get; set; }
+        public string? Author { get; set; }
         [Required]
         [DisplayName("List Price")]
         [Range(1, 1000, ErrorMessage = "Price must between 1-1000")]
         public double ListPrice { get; set; }
 
+
+
+        //PRODUCT STOCK
+
+
         [Required]
-        [DisplayName("Price for 1-50")]
-        [Range(1, 1000, ErrorMessage = "Price must between 1-1000")]
+        [DisplayName("Product Stock")]
+       // [Range(1, 1000, ErrorMessage = "Product Stock must between 1-1000")]
         public double Price { get; set; }
 
 
-        [Required]
+       // [Required]
         [DisplayName("Price for 50+")]
-        [Range(1, 1000, ErrorMessage = "Price must between 1-1000")]
+       // [Range(1, 1000, ErrorMessage = "Price must between 1-1000")]
         public double Price50 { get; set; }
 
-        [Required]
-        [DisplayName("Price for 100+")]
-        [Range(1, 1000, ErrorMessage = "Price must between 1-1000")]
+
+
+        //OFFER_PRICE
+
+       // [Required]
+        [DisplayName("Offer Price")]
+       // [Range(1, 1000, ErrorMessage = "Price must between 1-1000")]
         public double Price100 { get; set; }
+
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        [ValidateNever]
+        public Category? Category { get; set; }
+
+        [ValidateNever]
+        public List<ProductImage> ProductImages { get; set;}
+
+        //public static implicit operator Product(ProductVM v)
+        //{
+        //    return new Product
+        //    {
+        //         Assuming properties in ProductVM map to properties in Product
+        //        Id = v.ProductId,
+        //        Title = v.Title,
+        //         Other properties...
+        //    };
+        //}
     }
 }

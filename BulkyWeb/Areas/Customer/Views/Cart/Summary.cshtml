@@ -1,0 +1,356 @@
+﻿@model ShoppingCartVM
+
+<form method="post">
+	<br />
+	<div class="container">
+		<div class="card shadow border-0">
+
+			<div class="card-header bg-secondary bg-gradient text-light ml-0 py-4">
+				<div class="row px-4">
+					<div class="col-6">
+						<h5 class="pt-2 text-white">
+							Order Summary
+						</h5>
+					</div>
+					<div class="col-6 text-end">
+						<a asp-action="Index" class="btn btn-outline-danger btn-sm">Back to Cart</a>
+					</div>
+				</div>
+			</div>
+			<div class="card-body">
+				<div class="container rounded p-2">
+					<div class="row">
+						<div class="col-12 col-lg-6 pb-4">
+							<div class="row">
+								<h4 class="d-flex justify-content-between align-items-center mb-3">
+									<span class="text-info">Shipping Details:</span>
+								</h4>
+							</div>
+							<div class="row my-1">
+								<div class="col-3">
+									<label>Name</label>
+								</div>
+								<div class="col-9">
+									<input readonly asp-for="OrderHeader.Name" class="form-control" />
+									
+								</div>
+							</div>
+							<div class="row my-1">
+								<div class="col-3">
+									<label>Phone</label>
+								</div>
+								<div class="col-9">
+									<input readonly asp-for="OrderHeader.PhoneNumber" class="form-control" />
+									
+								</div>
+							</div>
+							<div class="row my-1">
+								<div class="col-3">
+									<label>Street Address</label>
+								</div>
+								<div class="col-9">
+									<input readonly asp-for="OrderHeader.StreetAddress" class="form-control" />
+								
+								</div>
+							</div>
+							<div class="row my-1">
+								<div class="col-3">
+									<label>City</label>
+								</div>
+								<div class="col-9">
+									<input readonly asp-for="OrderHeader.City" class="form-control" />
+									
+								</div>
+							</div>
+							<div class="row my-1">
+								<div class="col-3">
+									<label>State</label>
+								</div>
+								<div class="col-9">
+									<input readonly asp-for="OrderHeader.State" class="form-control" />
+								
+								</div>
+							</div>
+							<div class="row my-1">
+								<div class="col-3">
+									<label>Postal Code</label>
+								</div>
+								<div class="col-9">
+									<input readonly asp-for="OrderHeader.PostalCode" class="form-control" />
+									
+								</div>
+							</div>
+							<div class="row my-1">
+								<div class="col-3">
+									
+								</div>
+								<div class="row">
+									<div class="col-12 col-md-4">
+									<a class="btn btn-primary" id="openModalButton">Add Address</a>
+
+
+
+									</div>
+								
+									<div class="col-12 col-md-4">
+										<a class="btn btn-primary" asp-route-userId="@Model.OrderHeader.ApplicationUserId" asp-area="Customer" asp-controller="Address" asp-action="Index"> Select Address</a>
+									
+									</div>
+									
+
+									</div>
+								
+							</div>
+
+							
+						</div>
+						<div class="col-12 col-lg-5 offset-lg-1">
+							<h4 class="d-flex justify-content-between align-items-center mb-3">
+								<span class="text-info">Order Summary:</span>
+							</h4>
+							<ul class="list-group mb-3">
+								@foreach(var details in Model.ShoppingCartList){
+								<li class="list-group-item d-flex justify-content-between">
+									<div>
+										<h6 class="my-0">@details.Product.Title</h6>
+										<small class="text-muted">Quantity: @details.Count</small>
+									</div>
+									<span class="text-muted">@((details.Price*details.Count).ToString("c")) </span>
+								</li>
+								}
+
+								@* @if(@Model.OrderHeader.CancelTotal != 0){ *@
+								<li class="list-group-item d-flex justify-content-between bg-light">
+									<small class="text-info">Cart Total (USD)</small>
+
+									<strong id="totalAmount1" class="text-info">@Model.OrderHeader.ProductTotal</strong>
+								</li>
+									
+									
+							
+								@* } *@
+								@* @if(Model.OrderHeader.OrderTotal !=0){ *@
+
+								
+
+								@foreach (var coupon in Model.Coupon)
+								{
+									<li class="list-group-item d-flex justify-content-between bg-light">
+
+										<small class="text-info" value="@coupon.CouponCode">@coupon.CouponCode</small>
+										<button type="submit" asp-route-couponId="@coupon.Id" asp-route-couponDiscount="@coupon.Discount" asp-route-couponMinAmount="@coupon.MinCartAmount" asp-route-couponMaxAmount="@coupon.MaxCartAmount" class="btn btn-primary" asp-action="ApplyCoupon">Apply Coupon</button>
+										<button type="submit" asp-route-couponId="@coupon.Id" class="btn btn-primary" asp-action="RemoveCoupon">Remove Coupon</button>
+
+
+
+									</li>
+								}
+							@* 	} *@
+
+								<li class="list-group-item d-flex justify-content-between bg-light">
+									<small class="text-info">Cart Total After Coupon Discount(USD)</small>
+
+									<strong id="discountAmount" class="text-info">@Model.OrderHeader.Coupon</strong>
+								</li>
+
+								<li class="list-group-item d-flex justify-content-between bg-light">
+									<small class="text-info">Wallet Total (USD)</small>
+
+									<strong id="walletTotal" class="text-info">@Model.OrderHeader.CancelTotal</strong>
+								</li>
+								<li class="list-group-item d-flex justify-content-between bg-light">
+									<small class="text-info">Total Amount to Pay (USD)</small>
+								
+									<strong id="totalAmount" class="text-info">@Model.OrderHeader.OrderTotal</strong>
+								</li>
+
+
+
+
+							</ul>
+
+							
+							@if (Model.OrderHeader.OrderTotal > 0)
+
+							{
+
+							<div class="row my-3">
+								
+								
+								
+								<div class="col-9">
+
+
+
+									<input id="COD" type="radio" value="@SD.PaymenCashonDelivery" asp-for="OrderHeader.PaymentMethod" />
+									<label>
+										Cash on Delivery</label>
+								</div>
+
+							</div>
+
+							}
+							@if (Model.OrderHeader.OrderTotal > 0 && Model.OrderHeader.CancelTotal == 0){
+							<div class="row my-1">
+
+								
+
+								<div class="col-9">
+									<input id="E_payment" type="radio" value="@SD.PaymentPayNow" asp-for="OrderHeader.PaymentMethod" />
+									<label>
+										Pay Now</label>
+								</div>
+								</div>
+
+							}
+							else
+							{
+								<input hidden id="Wallet_payment" type="text" value="@SD.PaymentWallet" asp-for="OrderHeader.PaymentMethod" />
+							}
+
+							
+
+						</div>
+
+						
+					
+						
+
+
+					</div>
+				</div>
+
+
+				<div class="card-footer">
+					<div class="row">
+						<div class="col-12 col-md-8 pt-4">
+							<p style="color:maroon; font-size:14px;">
+								Estimate Arrival Date:
+								@DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()
+
+							</p>
+						</div>
+						<div class="col-12 col-md-4">
+							<button type="submit" value="Place Order" class="btn btn-primary form-control">Place Order</button>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+			
+		</div>
+	</div>
+</form>
+
+
+<!-- First Modal -->
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+			<div class="modal-body">
+				<!-- Add address form or content here -->
+
+
+
+				<div class="card shadow border-0 mt-4">
+					<div class="card-header bg-secondary bg-gradient m-lg-0 py-3" style="color:white;">
+						Add new Address
+					</div>
+					<div class="card-body p-4">
+						<form method="post" class="row" asp-action="Address" enctype="multipart/form-data">
+
+							 
+
+							<input asp-for="@Model.Address.user_Id" hidden />
+
+							
+									<div class="border p-3">
+
+										<div class="form-floating py-2 col-12">
+											<input asp-for="@Model.Address.StreetAddress" class="form-control border-0 shadow" value="" />
+											<label asp-for="@Model.Address.StreetAddress" class="ms-2"></label>
+
+											<span asp-validation-for="@Model.Address.StreetAddress" class="text-danger"></span>
+										</div>
+
+										<div class="form-floating py-2 col-12">
+											<input asp-for="@Model.Address.City" class="form-control border-0 shadow" value="" />
+											<label asp-for="@Model.Address.City" class="ms-2"></label>
+
+											<span asp-validation-for="@Model.Address.City" class="text-danger"></span>
+										</div>
+
+										<div class="form-floating py-2 col-12">
+											<input asp-for="@Model.Address.State" class="form-control border-0 shadow" value="" />
+											<label asp-for="@Model.Address.State" class="ms-2"></label>
+
+											<span asp-validation-for="@Model.Address.State" class="text-danger"></span>
+										</div>
+
+
+										<div class="form-floating py-2 col-12">
+											<input asp-for="@Model.Address.PostalCode" class="form-control border-0 shadow" value="" />
+											<label asp-for="@Model.Address.PostalCode" class="ms-2"></label>
+
+											<span asp-validation-for="@Model.Address.PostalCode" class="text-danger"></span>
+										</div>
+
+										<div class="row pt-2">
+											<div class="col-6 col-md-3">
+												<button type="submit" class="btn btn-outline-primary from-control">Create</button>
+											</div>
+
+										</div>
+
+									</div>
+
+
+
+						</form>
+					</div>
+				</div>
+
+
+
+
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary close-modal-btn">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts{
+
+    <partial name="_ValidationScriptsPartial" />
+<script>
+	$(document).ready(function () {
+		$('#openModalButton').click(function () {
+			$('#myModal').modal('show');
+			
+		});
+
+	});
+</script>
+	<script>
+		$(document).ready(function () {
+			// Add a click event handler to the close button inside the modal
+			$('#myModal').on('click', '.close-modal-btn', function () {
+				$('#myModal').modal('hide'); // Hide the modal
+			});
+		});
+	</script>
+
+
+
+	
+
+
+
+
+}
+

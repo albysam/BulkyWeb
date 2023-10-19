@@ -1,0 +1,35 @@
+﻿@model OrderVM
+<div class="container">
+    <h1>Admin Dashboard</h1>
+    <div class="row pt-2">
+        <div class="col-6 col-md-3">
+            <a type="button" class="btn btn-primary from-control" asp-area="Admin" asp-controller="Order" asp-action="Report">Sales Report</a>
+        </div>
+      
+    </div>
+    <!-- Add Chart Containers -->
+    <div class="row">
+        <div class="col-md-4">
+            <canvas id="trendingProductsChart" width="400" height="400"></canvas>
+            <h2>Trending Products</h2>
+          
+
+        </div>
+        <div class="col-md-4">
+            <canvas id="totalRevenueChart" width="400" height="400"></canvas>
+            <h2>Total Revenue</h2>
+        </div>
+        <div class="col-md-4">
+            <canvas id="totalOrdersChart" width="400" height="400"></canvas>
+            <h2>Total Orders</h2>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/js/dashboard.js"></script>
+
+
+
+
+

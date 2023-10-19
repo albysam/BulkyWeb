@@ -1,0 +1,24 @@
+﻿@model AddressVM
+<div class="card shadow border-0 mt-4">
+	<div class="card-header bg-secondary bg-gradient m-lg-0 py-3" style="color:white;">
+		Add new Address
+	</div>
+	<div class="card-body p-4">
+		<form method="post" asp-route-userId="@Model.OrderHeader.ApplicationUserId" asp-controller="Address" asp-action="ViewAddress">
+
+
+			@foreach (var address in Model.Address)
+			{
+			 <label>
+				<input type="radio" name="address" value="@address.Id" />
+				@address.StreetAddress, @address.City, @address.State, @address.PostalCode
+				</label>
+
+			 }
+
+
+
+
+		  </form>   
+	</div>
+</div>

@@ -9,6 +9,7 @@ namespace Bulky.DataAccess.Repository.IRepository
 {
     public interface ICategoryRepository : IRepository<Category>
     {
+        Category? FirstOrDefault(Func<object, bool> value);
         void Update(Category obj);
       
     }
