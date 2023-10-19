@@ -57,6 +57,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe.SecretKey").Get<string>();
@@ -66,10 +67,17 @@ app.UseAuthorization();
 app.UseSession();
 //SeedDatabase();
 app.MapRazorPages();
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+      name: "areas",
+      pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}"
+    );
+});
 
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 
 
