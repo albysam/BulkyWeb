@@ -1,6 +1,7 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
+using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -39,29 +40,11 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             IEnumerable<ProductImage> productImages = _unitOfWork.ProductImage.GetAll();
 
-            //foreach (var cart in WishlistVM.WishlistList)
-            //{
-            //    cart.Product.ProductImages = productImages.Where(u => u.ProductId == cart.Product.Id).ToList();
-            //    cart.Price = GetPriceBasedOnQuantity(cart);
-
-            //    WishlistListtVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
-            //}
+           
 
             return View(WishlistVM);
         }
 
-
-        //public IActionResult AddCart(int productId)
-        //{
-        //    ShoppingCart cart = new()
-        //    {
-        //        Product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductImages"),
-        //        Count = 1,
-        //        ProductId = productId
-        //    };
-
-        //    return View(cart);
-        //}
 
 
 
@@ -103,9 +86,10 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             TempData["success"] = "Cart updated Successfully";
             _unitOfWork.Save();
+            HttpContext.Session.SetInt32(SD.SessionCart,
+              _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
 
 
-          
 
             return RedirectToAction(nameof(Index));
         }
