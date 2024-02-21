@@ -16,7 +16,7 @@ namespace BulkyWeb.Area.Customer.Controllers
     [Area("Customer")]
 
 
-    //public new
+    
     public class HomeController : Controller
     {
 
