@@ -580,7 +580,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
 
                 StripeConfiguration.ApiKey = "sk_test_51NdFMzSDcXY2QkDCxG0w3dmJ0QYNOAAJDoFV64JT1i1S96EQmjyvGtiqGmRfZuhXALKrRnr2mN4QqtU9WbfSiTDP00dKwu63sY";
-                var domain = "https://localhost:7037/";
+               
+                var domain = Request.Scheme+ "://"+ Request.Host.Value +"/";
 
                 var options = new SessionCreateOptions
                 {
